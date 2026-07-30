@@ -26,7 +26,7 @@
     --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   }
   * { box-sizing: border-box; margin: 0; }
-  html { scroll-behavior: smooth; scrollbar-gutter: stable; background: #000; color-scheme: dark; }
+  html { scroll-behavior: smooth; scrollbar-gutter: stable; background: #000; color-scheme: dark; overflow-x: hidden; }
   body {
     background: #000;
     color: var(--text);
@@ -430,6 +430,48 @@
   .note { font-size: 12.5px; color: var(--dim); margin-top: 10px; line-height: 1.65; }
   .thanks { text-align: center; padding: 32px 10px; }
   .thanks .big { font-family: var(--display); font-size: 22px; font-weight: 600; letter-spacing: -.01em; color: var(--ok); margin-bottom: 6px; }
+
+  /* ============ MOBILE ============ */
+  @media (max-width: 640px) {
+    body { padding: 0 0 48px; }
+    nav.bar { padding: 18px 0 14px; }
+    nav.bar .navnote { display: none; }
+    .wrap { width: calc(100% - 32px); }
+    .narrow { width: calc(100% - 28px); }
+
+    .hero-frame { margin-top: 2px; }
+    .hero { min-height: auto; padding: 56px 20px 48px; border-radius: 22px; }
+    .hero .status { margin-bottom: 22px; font-size: 12px; }
+    .hero h1 { font-size: clamp(34px, 10vw, 46px); letter-spacing: -.025em; }
+    .hero .lede2 { font-size: 16px; margin-top: 20px; }
+    .modeboard { margin-top: 34px; gap: 13px; }
+    .modecard { padding: 18px; }
+    .hero .fine { margin-top: 26px; font-size: 10.5px; }
+
+    section.block { padding: 64px 0 6px; }
+    .sect-head { margin-bottom: 40px; }
+    .feature { padding: 24px 20px; gap: 26px; border-radius: 16px; }
+    .feature .mockwrap { min-height: 0; padding: 24px 20px; order: -1; }
+    .mockcard { max-width: 100%; }
+    footer.land { padding: 60px 0 40px; }
+
+    .card { padding: 18px; border-radius: 15px; }
+    .row { flex-wrap: wrap; }
+    /* keep primary pair actions usable when wrapping */
+    #pair-choose .row #btn-join { flex: 0 0 auto; }
+    ul.items li { flex-wrap: wrap; }
+    ul.items li .meta { width: 100%; }
+    ul.items li .body { min-width: 60%; }
+    .approval { gap: 8px; }
+    .approval .who { min-width: 100%; }
+    .qrbox img, .qrbox canvas { max-width: 82vw; height: auto; }
+  }
+
+  /* comfortable tap targets on touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    button, .modecard, .dropzone, ul.items li a, ul.items li button { min-height: 44px; }
+    .seg button { min-height: 42px; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
@@ -1215,11 +1257,23 @@
       }
       const blob = new Blob(it.parts, {type:it.mime});
       it.parts=null; it.url = URL.createObjectURL(blob);
-      const a=document.createElement('a');
-      a.href=it.url; a.download=it.name; a.textContent='Save';
-      a.onclick = () => { if (expiry==='burn') setTimeout(() => burn(row, it), 400); };
+      const btn=document.createElement('button');
+      btn.className='small'; btn.textContent='Save';
+      btn.onclick = () => {
+        // trigger a real download programmatically (works across mobile + desktop)
+        const a=document.createElement('a');
+        a.href=it.url; a.download=it.name||'download';
+        a.rel='noopener'; a.style.display='none';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => a.remove(), 1000);
+        btn.textContent='Saved';
+        btn.disabled=true;
+        // burn only after the download has been handed to the browser
+        if (expiry==='burn') setTimeout(() => burn(row, it), 2500);
+      };
       row.setStatus(human(it.size));
-      row.actions.appendChild(a);
+      row.actions.appendChild(btn);
       armExpiry(row, it);
     }
   })();
