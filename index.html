@@ -1,0 +1,1539 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000000">
+<title>DropBeam — share instantly. store nothing.</title>
+<meta name="description" content="Open-source, serverless sharing. Beam files and text between your devices, or collect event submissions straight into your own Google Drive.">
+<style>
+  :root {
+    --bg: #000000;
+    --bg2: #0e1319;
+    --panel: #10151c;
+    --panel2: #0b0f14;
+    --line: #1e2732;
+    --line-soft: #171f28;
+    --text: #f4f7f9;
+    --dim: #8d99a6;
+    --teal: #2ad8c4;
+    --teal-dim: #79d8cd;
+    --teal-deep: #07423b;
+    --teal-deep2: #052f2b;
+    --ok: #63e6a4; --bad: #ff7b7b; --burn: #ffb347; --drive: #7ee08a;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; scrollbar-gutter: stable; background: #000; color-scheme: dark; }
+  body {
+    background: #000;
+    color: var(--text);
+    font: 16px/1.6 var(--sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  ::selection { background: rgba(42,216,196,.25); }
+  /* Hard guarantee: the header strip and all top-level wrappers are pure black */
+  html, body, #landing, #app-zone, nav.bar, #appbar, .wrap, header, nav {
+    background-color: #000 !important;
+    background-image: none !important;
+  }
+
+  /* ============ shared ============ */
+  .hidden { display: none !important; }
+  .wrap { width: min(1140px, calc(100% - 44px)); margin-inline: auto; }
+  .narrow { width: min(600px, calc(100% - 32px)); margin-inline: auto; }
+  .eyebrow {
+    font: 600 11.5px/1 var(--mono); letter-spacing: .22em; text-transform: uppercase;
+    color: var(--teal);
+  }
+  svg.ic { display: block; }
+
+  button {
+    font: 600 15px/1 var(--sans); color: #0b1014;
+    background: #f2f5f7; border: 0; border-radius: 10px;
+    padding: 13px 22px; cursor: pointer;
+    transition: transform .15s, box-shadow .15s, background .15s, opacity .15s;
+  }
+  button:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(0,0,0,.4); }
+  button:active:not(:disabled) { transform: translateY(0); }
+  button.quiet { background: transparent; color: var(--dim); border: 1px solid var(--line); font-weight: 500; }
+  button.quiet:hover:not(:disabled) { color: var(--text); border-color: #303c49; box-shadow: none; }
+  button.small { padding: 7px 14px; font-size: 13px; border-radius: 8px; }
+  button.danger { background: transparent; color: var(--bad); border: 1px solid var(--line); font-weight: 500; }
+  button.danger:hover:not(:disabled) { box-shadow: none; }
+  button:disabled { opacity: .4; cursor: default; }
+  button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible,
+  [tabindex="0"]:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  input[type=text], textarea {
+    font: 500 15px/1.5 var(--sans); width: 100%; padding: 12px 14px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--panel2); color: var(--text);
+    transition: border-color .15s;
+  }
+  input[type=text]::placeholder, textarea::placeholder { color: #5d6a77; }
+  input[type=text]:focus, textarea:focus { border-color: rgba(42,216,196,.4); }
+
+  /* ============ brand ============ */
+  .brand {
+    display: inline-flex; align-items: center; gap: 9px;
+    font: 600 18px/1 var(--display); letter-spacing: -.01em;
+    color: var(--text); text-decoration: none;
+  }
+  .brand svg { width: 15px; height: 15px; fill: none; stroke: var(--teal); stroke-width: 1.8; }
+  .brand .lite { font-weight: 400; color: var(--text); }
+  nav.bar { padding: 26px 0 18px; display: flex; align-items: center; justify-content: space-between; }
+  nav.bar .navnote { font: 500 10.5px/1 var(--mono); letter-spacing: .24em; color: #6fbdb2;
+    text-transform: uppercase; }
+  #appbar { padding: 24px 0 10px; }
+
+  /* ============ HERO ============ */
+  .hero-frame {
+    border-radius: 30px;
+    padding: 0;
+    margin-top: 8px;
+  }
+  .hero {
+    position: relative; overflow: hidden;
+    border-radius: 30px;
+    min-height: min(80vh, 720px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 96px 26px;
+    background:
+      radial-gradient(110% 100% at 50% -10%, #14141d 0%, #0b0b11 45%, #050507 100%);
+    border: 1px solid rgba(255,255,255,.06);
+  }
+  /* subtle grid */
+  .hero .grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 54px 54px;
+    -webkit-mask-image: radial-gradient(130% 100% at 50% 0%, #000 0%, transparent 68%);
+    mask-image: radial-gradient(130% 100% at 50% 0%, #000 0%, transparent 68%);
+  }
+  .hero .orb { display: none; }
+  .hero > *:not(.grid):not(.orb) { position: relative; z-index: 1; }
+
+  .hero .status {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 7px 15px 7px 12px; border-radius: 999px;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+    backdrop-filter: blur(8px);
+    font: 500 12.5px/1 var(--sans); color: #d7d3ee; letter-spacing: .01em;
+    margin-bottom: 30px;
+  }
+  .hero .status .live { position: relative; width: 7px; height: 7px; border-radius: 50%;
+    background: #4ade80; box-shadow: 0 0 0 0 rgba(74,222,128,.6); animation: ripple 2.4s ease-out infinite; }
+  @keyframes ripple { 0% { box-shadow: 0 0 0 0 rgba(74,222,128,.55); } 70%,100% { box-shadow: 0 0 0 9px rgba(74,222,128,0); } }
+  .hero .status b { color: #fff; font-weight: 600; }
+
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(42px, 6.6vw, 74px);
+    font-weight: 700; letter-spacing: -.03em; line-height: 1.04;
+    max-width: 16ch; color: #fff;
+  }
+  .hero h1 .accent { color: var(--teal); }
+  .hero .lede2 { margin-top: 26px; font-size: 18px; color: #a9a4c8; font-weight: 400;
+    max-width: 50ch; line-height: 1.65; }
+  .hero .choices { margin-top: 40px; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .hero .choices button { padding: 14px 26px; }
+  .hero .choices #mode-beam {
+    background: var(--teal); color: #04201d;
+  }
+  .hero .choices #mode-beam:hover { background: #35e2ce; box-shadow: none; }
+  .hero .choices .alt { background: rgba(255,255,255,.04); color: #eceafb;
+    border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(6px); }
+  .hero .choices .alt:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.24); }
+  .hero .fine { margin-top: 32px; font: 500 11.5px/1 var(--mono); letter-spacing: .16em;
+    text-transform: uppercase; color: #8a83b4; }
+  .hero .fine b { color: #d9d4f5; font-weight: 600; }
+
+  /* hero explainer — two modes at a glance */
+  .modeboard {
+    margin-top: 48px; width: 100%; max-width: 720px;
+    display: grid; gap: 16px; grid-template-columns: 1fr;
+  }
+  @media (min-width: 620px) { .modeboard { grid-template-columns: 1fr 1fr; } }
+  .modecard {
+    text-align: left; border-radius: 18px; padding: 22px;
+    background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.09);
+    backdrop-filter: blur(8px);
+    transition: transform .18s, border-color .18s, background .18s;
+  }
+  .modecard:hover { transform: translateY(-3px); background: rgba(255,255,255,.06); }
+  .modecard.beam:hover { border-color: rgba(139,92,246,.55); }
+  .modecard.collect:hover { border-color: rgba(45,212,191,.55); }
+  .modecard .mc-top { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
+  .modecard .mc-ic {
+    width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+    display: grid; place-items: center;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
+  }
+  .modecard.beam .mc-ic { color: var(--teal); }
+  .modecard.collect .mc-ic { color: #5eead4; }
+  .modecard .mc-name { font: 600 16.5px/1 var(--display); letter-spacing: -.005em; }
+  .modecard .mc-for { font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+    color: #9a94c0; margin-top: 5px; }
+  .modecard .mc-desc { font-size: 14px; color: #b4afd0; line-height: 1.6; }
+  .modecard .mc-flow { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 15px;
+    font: 500 11.5px/1 var(--mono); color: #cfcae8; }
+  .modecard .mc-flow .step {
+    padding: 5px 9px; border-radius: 7px; background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.08); }
+  .modecard .mc-flow .arr { color: #7d76a8; }
+  .modecard .mc-go {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 16px;
+    font: 600 13px/1 var(--sans);
+  }
+  .modecard.beam .mc-go { color: var(--teal); }
+  .modecard.collect .mc-go { color: #6ee7d8; }
+  .modecard .mc-go svg { transition: transform .18s; }
+  .modecard:hover .mc-go svg { transform: translateX(3px); }
+
+  /* ============ landing sections ============ */
+  section.block { padding: 110px 0 10px; }
+  .sect-head { text-align: center; margin-bottom: 64px; }
+  .sect-head .eyebrow { display: block; margin-bottom: 18px; }
+  .sect-head h2 { font-family: var(--display); font-size: clamp(31px, 4.2vw, 48px); font-weight: 700; letter-spacing: -.02em; }
+  .sect-head p { margin-top: 16px; color: var(--dim); font-size: 17px; }
+
+  .feature {
+    position: relative;
+    background: #0c0d12;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    padding: clamp(28px, 4vw, 56px);
+    display: grid; gap: clamp(28px, 4vw, 64px);
+    grid-template-columns: 1fr;
+    align-items: center;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  @media (min-width: 860px) {
+    .feature { grid-template-columns: 1fr 1.05fr; }
+    .feature.flip .mockwrap { order: 2; }
+  }
+  .feature .f-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .feature .f-badge {
+    width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+    display: grid; place-items: center; color: var(--fx-solid, var(--teal));
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
+  }
+  .feature .f-num { font: 500 12px/1 var(--mono); letter-spacing: .04em; color: #9aa4b0; }
+  .feature h3 { font-family: var(--display); font-size: clamp(22px, 2.7vw, 29px); font-weight: 600; letter-spacing: -.015em;
+    margin-bottom: 20px; }
+  .feature ul.points { list-style: none; display: grid; gap: 14px; }
+  .feature ul.points li { position: relative; padding-left: 26px; font-size: 15.5px; color: #b8c2cc; line-height: 1.6; }
+  .feature ul.points li::before {
+    content: ""; position: absolute; left: 0; top: 3px; width: 17px; height: 17px; border-radius: 50%;
+    background: var(--fx-solid, var(--teal)); opacity: .16;
+  }
+  .feature ul.points li::after {
+    content: ""; position: absolute; left: 6px; top: 9px; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--fx-solid, var(--teal));
+  }
+  .feature ul.points li b { color: var(--text); font-weight: 600; }
+  .pills { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 24px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid rgba(255,255,255,.1); color: #c9d1da;
+    border-radius: 999px; padding: 8px 15px;
+    font: 500 12.5px/1 var(--sans);
+    background: rgba(255,255,255,.03);
+  }
+
+  /* mock panels — per-feature tint via --mock */
+  .mockwrap {
+    position: relative;
+    background: #0a0b10;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 14px; padding: clamp(26px, 3.5vw, 46px);
+    min-height: 320px; display: flex; align-items: center; justify-content: center;
+  }
+  .mockcard {
+    width: 100%; max-width: 420px;
+    background: rgba(10,11,17,.72);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 15px; padding: 22px 24px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.45);
+    backdrop-filter: blur(4px);
+  }
+  .mockcard .live {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(45,212,191,.12); color: #6ee7d8;
+    border: 1px solid rgba(45,212,191,.3); border-radius: 7px;
+    font: 600 10px/1 var(--mono); letter-spacing: .16em;
+    padding: 6px 10px; margin-bottom: 14px;
+  }
+  .mockcard .live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #34d399;
+    animation: pulse 2s ease-in-out infinite; }
+  .mockcard .mt-title { font-family: var(--display); font-size: 19px; font-weight: 600; letter-spacing: -.01em; }
+  .mockcard .mt-sub { color: #96a0ac; font-size: 13.5px; margin-top: 6px; }
+  .mockcard .mt-btn {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
+    border: 1px solid rgba(255,255,255,.16); color: #eef2f6;
+    border-radius: 9px; padding: 9px 15px; font: 600 13.5px/1 var(--sans);
+  }
+  .mockcard .mt-stats { display: flex; gap: 30px; margin-top: 18px; }
+  .mockcard .mt-stats b { font: 600 22px/1.3 var(--mono); display: block; color: #fff; }
+  .mockcard .mt-stats span { font-size: 12px; color: #96a0ac; }
+  .padmock-label { font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+    color: #8b95a3; margin-bottom: 12px; display: flex; align-items: center; gap: 9px; }
+  .padmock-label i { width: 7px; height: 7px; border-radius: 50%; background: var(--teal);
+    animation: pulse 2.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:.35} 50%{opacity:1} }
+  .padmock {
+    background: rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.08); border-radius: 10px;
+    font: 400 13.5px/1.8 var(--mono);
+    color: #dfe4ea; padding: 15px 17px; min-height: 118px; text-align: left;
+  }
+  .padmock .caret {
+    display: inline-block; width: 7px; height: 15px; vertical-align: -2px;
+    background: var(--teal); animation: blink 1.05s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .padmock .who { color: #7a8490; font-size: 11.5px; }
+  .chipcloud { display: flex; flex-wrap: wrap; gap: 11px; justify-content: center; max-width: 400px; }
+  .chipcloud .pill { font-size: 13px; padding: 10px 17px; border-color: rgba(255,255,255,.14);
+    color: #e6ebf0; background: rgba(255,255,255,.05); }
+
+  footer.land {
+    text-align: center; color: var(--dim); font-size: 13px;
+    padding: 84px 0 52px; line-height: 2;
+  }
+  footer.land .fmono { font: 500 11px/2.2 var(--mono); letter-spacing: .18em; text-transform: uppercase; }
+  footer.land b { color: var(--text); font-weight: 500; }
+  footer.land .brand { justify-content: center; display: inline-flex; margin-bottom: 10px; }
+
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ============ APP VIEWS ============ */
+  #app-zone { padding-bottom: 80px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px; padding: 24px; margin-bottom: 16px;
+    box-shadow: 0 12px 36px rgba(0,0,0,.28);
+  }
+  .card h2 {
+    font: 500 11px/1.5 var(--mono); letter-spacing: .18em;
+    text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  #code-in { font-family: var(--mono); letter-spacing: .18em; text-transform: uppercase; text-align: center; }
+  .row { display: flex; gap: 10px; }
+  .row > * { flex: 1; }
+  .mt { margin-top: 10px; }
+  .field-label { font-size: 12.5px; font-weight: 500; color: var(--dim); margin: 14px 2px 6px; }
+
+  #code-show {
+    font: 500 25px/1.4 var(--mono); letter-spacing: .2em; color: var(--teal);
+    text-align: center; padding: 8px 0 2px; user-select: all; overflow-wrap: anywhere;
+  }
+  .qrbox { display: flex; justify-content: center; margin: 16px 0 12px; }
+  .qrbox img, .qrbox canvas { border-radius: 12px; padding: 9px; background: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+  .center { text-align: center; color: var(--dim); font-size: 13.5px; line-height: 1.7; }
+  .status-line { min-height: 20px; font-size: 13px; color: var(--dim); margin-top: 10px; }
+  .status-line.bad { color: var(--bad); }
+  .status-line.ok { color: var(--ok); }
+
+  .approval {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    background: var(--panel2); border: 1px solid rgba(42,216,196,.45);
+    border-radius: 12px; padding: 12px 14px; margin-top: 10px; font-size: 14px;
+  }
+  .approval .who { flex: 1; min-width: 120px; font-weight: 500; }
+  .approval .words { font: 600 13px/1 var(--mono); letter-spacing: .1em; color: var(--teal); }
+  .verify-big { font: 600 21px/1.5 var(--mono); letter-spacing: .12em; color: var(--teal);
+    text-align: center; padding: 12px 0; }
+
+  #roster { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--panel2); border: 1px solid var(--line);
+    border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 500;
+  }
+  .chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok);
+    box-shadow: 0 0 6px rgba(99,230,164,.6); }
+  .chip.me { border-color: rgba(42,216,196,.5); }
+
+  #pad { min-height: 104px; resize: vertical; font: 400 13.5px/1.75 var(--mono); }
+  #pad-status { font-size: 12px; color: var(--dim); margin-top: 6px; min-height: 16px; }
+  #pad-status .who { color: var(--teal); }
+
+  .dropzone {
+    border: 1.5px dashed #29343f; border-radius: 14px;
+    padding: 36px 18px; text-align: center; cursor: pointer;
+    background: linear-gradient(180deg, rgba(42,216,196,.03), transparent 60%);
+    transition: border-color .16s, background .16s, box-shadow .16s;
+  }
+  .dropzone:hover { border-color: rgba(42,216,196,.45); }
+  .dropzone.over {
+    border-color: var(--teal);
+    background: linear-gradient(180deg, rgba(42,216,196,.09), rgba(42,216,196,.03));
+    box-shadow: inset 0 0 44px rgba(42,216,196,.06);
+  }
+  .drop-ico {
+    width: 44px; height: 44px; margin: 0 auto 14px; border-radius: 50%;
+    display: grid; place-items: center; color: var(--teal);
+    background: rgba(42,216,196,.1); border: 1px solid rgba(42,216,196,.35);
+  }
+  .drop-big { font-size: 15.5px; font-weight: 600; letter-spacing: -.01em; }
+  .drop-hint { color: var(--dim); font-size: 13px; margin-top: 6px; }
+  #file, #p-file { display: none; }
+
+  #paste-confirm {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: var(--panel2); border: 1px solid rgba(255,179,71,.5);
+    border-radius: 12px; padding: 12px 14px; margin-top: 10px; font-size: 13px;
+  }
+  #paste-confirm .what { flex: 1; min-width: 140px; overflow-wrap: anywhere;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  .seg { display: flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    background: var(--panel2); }
+  .seg button { flex: 1; background: transparent; color: var(--dim); border: 0;
+    border-radius: 0; padding: 10px 4px; font-size: 12.5px; font-weight: 500; }
+  .seg button:hover { transform: none; box-shadow: none; }
+  .seg button.on { background: rgba(42,216,196,.12); color: var(--teal); font-weight: 600; }
+
+  ul.items { list-style: none; margin-top: 14px; }
+  ul.items li {
+    display: flex; align-items: center; gap: 11px;
+    background: var(--panel2); border: 1px solid var(--line-soft);
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; font-size: 14px;
+  }
+  ul.items li .body { flex: 1; min-width: 0; }
+  ul.items li .name { overflow-wrap: anywhere; font-weight: 500; }
+  ul.items li .from-tag { font-size: 12px; color: var(--drive); font-weight: 600; }
+  ul.items li .textprev { overflow-wrap: anywhere; white-space: pre-wrap;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  ul.items li .meta { color: var(--dim); font-size: 12px; white-space: nowrap; }
+  ul.items li a { color: var(--teal); text-decoration: none; font-weight: 600; }
+  .bar { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; margin-top: 8px; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--teal); }
+  ul.items li.done .bar i { background: var(--ok); }
+  ul.items li.burned { border-color: transparent; opacity: .55; }
+  ul.items li.burned .body { color: var(--burn); font-size: 13px; }
+  .ring { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+          background: conic-gradient(var(--burn) var(--p, 100%), var(--line) 0);
+          display: grid; place-items: center; }
+  .ring::after { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--panel2); }
+
+  .bignum { font: 600 28px/1.3 var(--mono); color: var(--drive); }
+  .note { font-size: 12.5px; color: var(--dim); margin-top: 10px; line-height: 1.65; }
+  .thanks { text-align: center; padding: 32px 10px; }
+  .thanks .big { font-family: var(--display); font-size: 22px; font-weight: 600; letter-spacing: -.01em; color: var(--ok); margin-bottom: 6px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M6.3 6.3l11.4 11.4M17.7 6.3L6.3 17.7"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L8 8m4-4l4 4M5 20h14"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></symbol>
+    <symbol id="i-beam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h6m4 0h6M12 4v6m0 4v6"/><circle cx="12" cy="12" r="2.4"/></symbol>
+    <symbol id="i-collect" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13v4a2 2 0 002 2h10a2 2 0 002-2v-4"/><path d="M12 4v9m0 0l-3.5-3.5M12 13l3.5-3.5"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 6l6 6-6 6"/></symbol>
+  </defs>
+</svg>
+
+<!-- ================================================================
+     LANDING
+================================================================ -->
+<div id="landing">
+  <nav class="bar wrap">
+    <a class="brand" href="./"><svg class="ic" width="15" height="15"><use href="#i-spark"/></svg>drop<span class="lite">beam</span></a>
+    <span class="navnote">Open source · Serverless</span>
+  </nav>
+
+  <!-- HERO -->
+  <div class="wrap">
+    <div class="hero-frame">
+      <div class="hero">
+        <div class="grid"></div>
+        <div class="orb a"></div>
+        <div class="orb b"></div>
+        <div class="orb c"></div>
+        <span class="status"><span class="live"></span>Serverless &amp; <b>end-to-end encrypted</b></span>
+        <h1>Share instantly.<br><span class="accent">Store nothing.</span></h1>
+        <p class="lede2">Files and text move straight between your devices — never through a server. Pick a mode below — everything burns after use.</p>
+
+        <div class="modeboard">
+          <div class="modecard beam" id="mode-beam" role="button" tabindex="0">
+            <div class="mc-top">
+              <span class="mc-ic"><svg class="ic" width="19" height="19"><use href="#i-beam"/></svg></span>
+              <span>
+                <div class="mc-name">Beam</div>
+                <div class="mc-for">Between your devices</div>
+              </span>
+            </div>
+            <p class="mc-desc">Send files, text, or a live clipboard privately between your own laptop, phone, and tablet.</p>
+            <div class="mc-flow">
+              <span class="step">Pair</span><span class="arr">→</span>
+              <span class="step">Drop</span><span class="arr">→</span>
+              <span class="step">Burns</span>
+            </div>
+            <span class="mc-go">Start beaming <svg class="ic" width="15" height="15"><use href="#i-right"/></svg></span>
+          </div>
+
+          <div class="modecard collect" id="mode-collect" role="button" tabindex="0">
+            <div class="mc-top">
+              <span class="mc-ic"><svg class="ic" width="19" height="19"><use href="#i-collect"/></svg></span>
+              <span>
+                <div class="mc-name">Collect</div>
+                <div class="mc-for">Into your Google Drive</div>
+              </span>
+            </div>
+            <p class="mc-desc">Host an event, show a QR, and anyone can upload files straight to your Drive — no app, no sign-in.</p>
+            <div class="mc-flow">
+              <span class="step">Share QR</span><span class="arr">→</span>
+              <span class="step">They upload</span><span class="arr">→</span>
+              <span class="step">Drive</span>
+            </div>
+            <span class="mc-go">Start collecting <svg class="ic" width="15" height="15"><use href="#i-right"/></svg></span>
+          </div>
+        </div>
+
+        <p class="fine">No accounts · No installs · <b>No traces</b></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEAM. COLLECT. BURN. -->
+  <section class="block wrap">
+    <div class="sect-head reveal">
+      <span class="eyebrow">Two modes, one file</span>
+      <h2>Beam. Collect. Burn.</h2>
+      <p>One page, zero servers — your data never sleeps in someone else's cloud.</p>
+    </div>
+
+    <!-- Feature 1 -->
+    <div class="feature reveal" style="--fx:rgba(139,92,246,.55); --fx-solid:#8b5cf6; --mock:rgba(139,92,246,.22)">
+      <div class="mockwrap">
+        <div class="mockcard">
+          <div class="padmock-label"><i></i>Live pad · synced as you type</div>
+          <div class="padmock">meeting moved to 4:30<br>wifi: BlueHouse_5G / pass 7741<br>https://maps.app/xK2… <span class="caret"></span><br><span class="who">— edited on Phone · Falcon</span></div>
+          <div class="mt-stats">
+            <div><b>0 ms</b><span>server storage</span></div>
+            <div><b>E2E</b><span>encrypted</span></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="f-eyebrow">
+          <span class="f-badge"><svg class="ic" width="18" height="18"><use href="#i-beam"/></svg></span>
+          <span class="f-num">Beam</span>
+        </div>
+        <h3>Your devices, one surface</h3>
+        <ul class="points">
+          <li>A <b>live pad</b> that syncs keystroke-by-keystroke across laptop, phone, and tablet</li>
+          <li>Beam files at <b>full quality</b> — multi-GB videos stream straight to disk, never through a cloud</li>
+          <li>Every received item <b>burns after you save it</b>, or on a countdown you choose</li>
+          <li>Every device is approved by you, with matching <b>code words</b> on both screens</li>
+        </ul>
+        <div class="pills">
+          <span class="pill">Laptop</span><span class="pill">Phone</span><span class="pill">Any browser</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 2 -->
+    <div class="feature flip reveal" style="--fx:rgba(45,212,191,.55); --fx-solid:#2dd4bf; --mock:rgba(45,212,191,.2)">
+      <div class="mockwrap">
+        <div class="mockcard">
+          <span class="live">COLLECTING</span>
+          <div class="mt-title">Monsoon Photography Contest</div>
+          <div class="mt-sub">Folder created in your Drive · PIN protected</div>
+          <div class="mt-stats">
+            <div><b>34</b><span>files received</span></div>
+            <div><b>12</b><span>participants</span></div>
+          </div>
+          <span class="mt-btn">Open Drive folder <svg class="ic" width="14" height="14"><use href="#i-arrow"/></svg></span>
+        </div>
+      </div>
+      <div>
+        <div class="f-eyebrow">
+          <span class="f-badge"><svg class="ic" width="18" height="18"><use href="#i-collect"/></svg></span>
+          <span class="f-num">Collect</span>
+        </div>
+        <h3>Collect with confidence</h3>
+        <ul class="points">
+          <li>Show one QR — participants upload in seconds, with <b>no app and no Google account</b></li>
+          <li>Files land in <b>your own Google Drive</b>, each named after who sent it</li>
+          <li>Sign-in stays in your browser tab; DropBeam has no server and never sees your credentials</li>
+          <li><b>PIN rate-limiting</b> and per-person quotas keep strangers and spam out</li>
+        </ul>
+        <div class="pills">
+          <span class="pill">Events</span><span class="pill">Weddings</span><span class="pill">Classrooms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 3 -->
+    <div class="feature reveal" style="--fx:rgba(236,72,153,.5); --fx-solid:#ec4899; --mock:rgba(236,72,153,.16)">
+      <div class="mockwrap">
+        <div class="chipcloud">
+          <span class="pill">One HTML file</span>
+          <span class="pill">No server</span>
+          <span class="pill">E2E encrypted</span>
+          <span class="pill">Burn after save</span>
+          <span class="pill">QR pairing</span>
+          <span class="pill">Open source</span>
+        </div>
+      </div>
+      <div>
+        <div class="f-eyebrow">
+          <span class="f-badge"><svg class="ic" width="18" height="18"><use href="#i-spark"/></svg></span>
+          <span class="f-num">Privacy</span>
+        </div>
+        <h3>Private by design</h3>
+        <ul class="points">
+          <li>The entire product is a <b>single HTML file</b> — audit every line in one sitting</li>
+          <li>Transfers use WebRTC's mandatory encryption; a relay can help connect but <b>can never read</b></li>
+          <li>Nothing is written to any database, ever — closing the tab is a <b>full wipe</b></li>
+          <li>No accounts, no analytics, no tracking pixels, no ads. Ever.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="land">
+    <a class="brand" href="./"><svg class="ic" width="14" height="14"><use href="#i-spark"/></svg>drop<span class="lite">beam</span></a><br>
+    <span class="fmono">Open source · No server · No accounts · No tracking</span><br>
+    files travel device-to-device, <b>end-to-end encrypted</b>
+  </footer>
+</div>
+
+<!-- ================================================================
+     APP ZONE
+================================================================ -->
+<div id="app-zone">
+  <nav id="appbar" class="wrap hidden">
+    <a class="brand" href="./"><svg class="ic" width="15" height="15"><use href="#i-spark"/></svg>drop<span class="lite">beam</span></a>
+  </nav>
+
+  <!-- BEAM MODE -->
+  <div id="beam-root" class="narrow hidden">
+    <section class="card hidden" id="approvals-card">
+      <h2>Devices asking to join</h2>
+      <div id="approvals"></div>
+      <p class="note">Only allow a device if it shows the <b>same code words</b> on its screen.</p>
+    </section>
+
+    <section id="pair" class="card">
+      <h2>Link your devices</h2>
+      <div id="pair-choose">
+        <button id="btn-create" style="width:100%">Start a room on this device</button>
+        <div class="row mt">
+          <input id="code-in" type="text" maxlength="8" placeholder="ROOM CODE" autocomplete="off" aria-label="Room code">
+          <button id="btn-join" class="quiet" style="flex:0 0 auto">Join</button>
+        </div>
+      </div>
+      <div id="pair-wait" class="hidden">
+        <div id="code-show" aria-live="polite"></div>
+        <div id="qr" class="qrbox"></div>
+        <p class="center">Scan the QR or enter the code on your other devices.<br>You'll approve each one before it can join.</p>
+      </div>
+      <div id="join-wait" class="hidden">
+        <p class="center">Waiting for the room owner to let you in.<br>Your verification code words:</p>
+        <div class="verify-big" id="my-verify"></div>
+        <p class="center">The owner's screen must show the same.</p>
+      </div>
+      <div id="msg" class="status-line" aria-live="polite"></div>
+    </section>
+
+    <div id="app" class="hidden">
+      <section class="card">
+        <h2>In this room <span id="host-badge" class="hidden" style="color:var(--teal)">· you're the hub</span></h2>
+        <div id="roster"></div>
+        <p class="note" id="hub-note"></p>
+      </section>
+
+      <section class="card">
+        <h2>Live pad — synced as you type</h2>
+        <textarea id="pad" placeholder="Type here on any device — it appears on all of them instantly."></textarea>
+        <div class="row mt">
+          <button id="pad-copy" class="quiet small">Copy pad</button>
+          <button id="pad-clear" class="quiet small">Clear pad</button>
+        </div>
+        <div id="pad-status"></div>
+      </section>
+
+      <section class="card">
+        <h2>Beam</h2>
+        <div id="drop" class="dropzone" tabindex="0" role="button" aria-label="Choose files to send">
+          <div class="drop-ico"><svg class="ic" width="18" height="18"><use href="#i-up"/></svg></div>
+          <div class="drop-big">Drag &amp; drop files here</div>
+          <div class="drop-hint">or tap to browse · or press Ctrl/Cmd+V to beam your clipboard</div>
+        </div>
+        <input id="file" type="file" multiple>
+        <div id="paste-confirm" class="hidden">
+          <span class="what" id="paste-what"></span>
+          <button id="paste-yes" class="small">Beam it</button>
+          <button id="paste-no" class="quiet small">Cancel</button>
+        </div>
+        <div class="row mt">
+          <input id="text-in" type="text" placeholder="Or type a quick message…" aria-label="Message to beam">
+          <button id="text-send" style="flex:0 0 auto">Beam text</button>
+        </div>
+        <div class="field-label">When something arrives on this device, it should:</div>
+        <div class="seg" role="radiogroup" aria-label="Expiry policy">
+          <button class="on" data-exp="burn">Burn after save</button>
+          <button data-exp="300">Last 5 min</button>
+          <button data-exp="3600">Last 1 hour</button>
+        </div>
+        <ul class="items" id="list"></ul>
+      </section>
+    </div>
+  </div>
+
+  <!-- COLLECT MODE (organizer) -->
+  <div id="collect-root" class="narrow hidden">
+    <section class="card" id="c-step1">
+      <h2>Step 1 — connect your Google Drive</h2>
+      <p class="note" style="margin:0 0 12px">You sign in with your own Google account. Access stays inside this browser tab — DropBeam has no server and never sees your files or credentials. It can only touch folders it creates.</p>
+      <button id="g-signin" style="width:100%">Sign in with Google</button>
+      <div id="g-status" class="status-line"></div>
+    </section>
+
+    <section class="card hidden" id="c-step2">
+      <h2>Step 2 — set up your event</h2>
+      <div class="field-label">Event name (becomes the Drive folder name)</div>
+      <input id="ev-name" type="text" placeholder="Monsoon Photography Contest 2026" maxlength="80">
+      <div class="field-label">Event PIN — optional, stops strangers with the link</div>
+      <input id="ev-pin" type="text" placeholder="e.g. 2468 (leave empty for open access)" maxlength="12">
+      <button id="ev-start" class="mt" style="width:100%">Create folder &amp; start collecting</button>
+      <div id="ev-status" class="status-line"></div>
+    </section>
+
+    <section class="card hidden" id="c-live">
+      <h2>Collecting · <span id="live-event" style="color:var(--drive)"></span></h2>
+      <div id="c-qr" class="qrbox"></div>
+      <p class="center" id="c-link-line"></p>
+      <div class="row mt">
+        <button id="c-copylink" class="quiet small">Copy upload link</button>
+        <a id="c-folder" target="_blank" rel="noopener" style="flex:1"><button class="quiet small" style="width:100%">Open Drive folder</button></a>
+        <button id="c-stop" class="danger small">Stop</button>
+      </div>
+      <div class="row mt" style="align-items:center">
+        <div><span class="bignum" id="n-files">0</span><div class="note" style="margin:0">files received</div></div>
+        <div><span class="bignum" id="n-people">0</span><div class="note" style="margin:0">participants</div></div>
+      </div>
+      <p class="note">Keep this tab open and your device awake — it's the bridge into your Drive. Limits: 20 files / 500&nbsp;MB per participant, 1&nbsp;GB per file, 5&nbsp;GB per event.</p>
+      <ul class="items" id="c-list"></ul>
+    </section>
+  </div>
+
+  <!-- PARTICIPANT VIEW -->
+  <div id="part-root" class="narrow hidden">
+    <section class="card">
+      <h2 id="p-title">Connecting to the event…</h2>
+      <div id="p-gate" class="hidden">
+        <div class="field-label">Your name (shown with your submission)</div>
+        <input id="p-name" type="text" maxlength="60" placeholder="Your name">
+        <div id="p-pin-wrap" class="hidden">
+          <div class="field-label">Event PIN</div>
+          <input id="p-pin" type="text" maxlength="12" placeholder="Ask the organizer">
+        </div>
+        <button id="p-enter" class="mt" style="width:100%">Continue</button>
+      </div>
+      <div id="p-upload" class="hidden">
+        <div id="p-drop" class="dropzone" tabindex="0" role="button" aria-label="Choose files to submit">
+          <div class="drop-ico"><svg class="ic" width="18" height="18"><use href="#i-up"/></svg></div>
+          <div class="drop-big">Drag &amp; drop your files here</div>
+          <div class="drop-hint">or tap to browse · photos upload in original quality</div>
+        </div>
+        <input id="p-file" type="file" multiple>
+        <ul class="items" id="p-list"></ul>
+        <div id="p-thanks" class="thanks hidden">
+          <div class="big">Submitted</div>
+          <div class="note">Your files were delivered to the organizer. You can add more above.</div>
+          <div class="note mt">This event runs on <b>DropBeam</b> — free &amp; open source.
+            <a id="p-cta" href="./" style="color:var(--teal)">Run your own →</a></div>
+        </div>
+      </div>
+      <div id="p-msg" class="status-line" aria-live="polite"></div>
+    </section>
+  </div>
+</div>
+
+<!--
+  SECURITY NOTE (for the site owner):
+  Before launch, add Subresource Integrity hashes to the two cdnjs script tags
+  below — the SETUP guide shows the exact one-line command to generate them.
+  Example:  <script src="…peerjs.min.js" integrity="sha384-…" crossorigin="anonymous"></script>
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+(() => {
+  "use strict";
+
+  // ============ SITE OWNER CONFIG — see SETUP guide ============
+  const GOOGLE_CLIENT_ID = "PASTE_YOUR_CLIENT_ID_HERE.apps.googleusercontent.com";
+  // Optional: run your own PeerJS signaling server and set it here, e.g.
+  // const SIGNALING = { host:'peer.yourdomain.com', port:443, secure:true, path:'/' };
+  const SIGNALING = null;
+  // Collect-mode quotas:
+  const MAX_FILE      = 1  * 1024 * 1024 * 1024;   // 1 GB per file
+  const MAX_P_FILES   = 20;                        // files per participant
+  const MAX_P_BYTES   = 500 * 1024 * 1024;         // bytes per participant
+  const MAX_ROOM_BYTES= 5  * 1024 * 1024 * 1024;   // bytes per event
+  const PIN_TRIES     = 3;                         // PIN attempts per connection
+  // =============================================================
+
+  const $ = id => document.getElementById(id);
+  const CHUNK = 64 * 1024;
+  const HIGH_WATER = 4 * 1024 * 1024;
+  const BIG_FILE = 300 * 1024 * 1024;
+  const MEM_CAP = 200 * 1024 * 1024;
+  const PREFIX = 'dropbeam-x9-';
+  const CPREFIX = 'dropbeam-ev9-';
+  const FS_OK = 'showSaveFilePicker' in window;
+  const peerOpts = () => SIGNALING ? Object.assign({debug:0}, SIGNALING) : {debug:0};
+
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const tag = ['Kiwi','Falcon','Otter','Lynx','Comet','Maple','Pixel','Delta'][Math.floor(Math.random()*8)];
+  const myName = (isMobile ? 'Phone' : 'Laptop') + ' · ' + tag;
+  const WORDS = ['AMBER','BIRCH','CEDAR','DELTA','EMBER','FLINT','GROVE','HAZEL',
+                 'INDIGO','JUNIPER','KESTREL','LARK','MAPLE','NORTH','ONYX','PINE'];
+
+  const human = n => { const u=['B','KB','MB','GB']; let i=0;
+    while (n>=1024 && i<u.length-1){n/=1024;i++;} return n.toFixed(i?1:0)+' '+u[i]; };
+  const newCode = (len=8) => { const abc='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let c='';
+    for (const b of crypto.getRandomValues(new Uint8Array(len))) c += abc[b%abc.length]; return c; };
+  const twoWords = () => { const r=crypto.getRandomValues(new Uint8Array(2));
+    let a = WORDS[r[0]%WORDS.length], b = WORDS[r[1]%WORDS.length];
+    if (a===b) b = WORDS[(r[1]+1)%WORDS.length];
+    return a + ' · ' + b; };
+  const rid = () => crypto.getRandomValues(new Uint32Array(1))[0];
+  const frame = (id, buf) => { const o=new Uint8Array(4+buf.byteLength);
+    new DataView(o.buffer).setUint32(0,id); o.set(new Uint8Array(buf),4); return o.buffer; };
+  const unframe = buf => { const u8 = new Uint8Array(buf);
+    return { id: new DataView(u8.buffer, u8.byteOffset).getUint32(0), payload: u8.slice(4).buffer }; };
+  const pageUrl = () => location.origin.startsWith('http') ? location.origin + location.pathname : null;
+  const setLine = (el, t, cls) => { el.textContent = t || ''; el.className = 'status-line' + (cls ? ' ' + cls : ''); };
+  const enterApp = () => { $('landing').classList.add('hidden'); $('appbar').classList.remove('hidden');
+    window.scrollTo(0, 0); };
+
+  const io = ('IntersectionObserver' in window) ? new IntersectionObserver(es => {
+    es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: .12 }) : null;
+  document.querySelectorAll('.reveal').forEach(el => io ? io.observe(el) : el.classList.add('in'));
+
+  function makeRow(listEl, o) {
+    const li = document.createElement('li');
+    const ring = document.createElement('span'); ring.className = 'ring hidden';
+    const body = document.createElement('span'); body.className = 'body';
+    if (o.from) { const f=document.createElement('div'); f.className='from-tag'; f.textContent=o.from; body.appendChild(f); }
+    if (o.title) { const n=document.createElement('div'); n.className='name'; n.textContent=o.title; body.appendChild(n); }
+    const bar = document.createElement('span'); bar.className='bar'; bar.innerHTML='<i></i>';
+    if (o.kind === 'file') body.appendChild(bar);
+    const meta = document.createElement('span'); meta.className='meta'; meta.textContent = o.status || '';
+    const actions = document.createElement('span');
+    li.append(ring, body, meta, actions);
+    listEl.prepend(li);
+    return { el: li, ring, actions,
+      setProgress: p => { bar.querySelector('i').style.width = Math.min(100, p*100) + '%'; },
+      setStatus: (s, bad, good) => { meta.textContent = s;
+        meta.style.color = bad ? 'var(--bad)' : good ? 'var(--ok)' : ''; },
+      setText: t => { const d=document.createElement('div'); d.className='textprev'; d.textContent=t; body.prepend(d); } };
+  }
+
+  // ================================================================
+  // MODE ROUTING
+  // ================================================================
+  const params = new URLSearchParams(location.search);
+  const uploadCode = params.get('upload');
+  const joinCode = params.get('join');
+
+  const goBeam = () => { enterApp(); $('beam-root').classList.remove('hidden'); };
+  const goCollect = () => { enterApp(); $('collect-root').classList.remove('hidden'); initCollect(); };
+  $('mode-beam').onclick = goBeam;
+  $('mode-collect').onclick = goCollect;
+  $('mode-beam').addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); goBeam(); } });
+  $('mode-collect').addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); goCollect(); } });
+
+  if (uploadCode) {
+    enterApp();
+    $('part-root').classList.remove('hidden');
+    startParticipant(uploadCode.toUpperCase().slice(0, 8));
+  } else if (joinCode) {
+    enterApp();
+    $('beam-root').classList.remove('hidden');
+    $('code-in').value = joinCode.toUpperCase().slice(0, 8);
+    setTimeout(() => $('btn-join').onclick(), 400);
+  }
+
+  // ================================================================
+  // BEAM MODE — host approval + verification code words
+  // ================================================================
+  (() => {
+    let peer=null, isHost=false, conns=[], roster=[myName];
+    let expiry='burn', padRev=0, padTimer=null, padNotice=null;
+    const msg = (t,bad) => setLine($('msg'), t, bad?'bad':'');
+
+    function broadcast(d, except){ for (const c of conns) if (c!==except && c.open) c.send(d); }
+
+    function onIncoming(c){
+      c._approved = false;
+      c.on('data', d => onData(d, c));
+      c.on('close', () => {
+        conns = conns.filter(x => x!==c);
+        if (c._card) c._card.remove();
+        maybeHideApprovals();
+        if (c._approved && isHost){
+          roster = roster.filter(n => n!==c._dbName);
+          broadcast(JSON.stringify({t:'roster', list:roster})); renderRoster();
+        }
+      });
+    }
+    function askApproval(c, name){
+      const words = twoWords();
+      c._dbName = name; c._words = words;
+      c.send(JSON.stringify({t:'verify', words}));
+      $('approvals-card').classList.remove('hidden');
+      const div = document.createElement('div');
+      div.className = 'approval';
+      const who = document.createElement('span'); who.className='who'; who.textContent = name;
+      const em = document.createElement('span'); em.className='words'; em.textContent = words;
+      const yes = document.createElement('button'); yes.className='small'; yes.textContent='Allow';
+      const no = document.createElement('button'); no.className='quiet small'; no.textContent='Deny';
+      div.append(who, em, yes, no);
+      $('approvals').appendChild(div);
+      c._card = div;
+      yes.onclick = () => {
+        div.remove(); maybeHideApprovals();
+        c._approved = true; conns.push(c); roster.push(name);
+        c.send(JSON.stringify({t:'approved'}));
+        broadcast(JSON.stringify({t:'roster', list:roster}));
+        renderRoster();
+        if (!$('app').classList.contains('hidden')) return;
+        $('pair').classList.add('hidden'); $('app').classList.remove('hidden'); renderRoster();
+      };
+      no.onclick = () => { div.remove(); maybeHideApprovals(); c.close(); };
+    }
+    function maybeHideApprovals(){
+      if (!$('approvals').children.length) $('approvals-card').classList.add('hidden');
+    }
+
+    function onData(data, from){
+      if (isHost && !from._approved){
+        if (typeof data === 'string'){
+          try { const m = JSON.parse(data);
+            if (m.t==='hello' && !from._dbName) askApproval(from, String(m.name||'Unknown device').slice(0,40));
+          } catch {}
+        }
+        return;
+      }
+      if (typeof data !== 'string'){ if (isHost) broadcast(data, from); receiveChunk(data); return; }
+      let m; try { m = JSON.parse(data); } catch { return; }
+      if (isHost){
+        if ((m.t==='go'||m.t==='skip') && senders[m.id]){ handleReply(m); return; }
+        if (m.t!=='hello') broadcast(data, from);
+      }
+      switch(m.t){
+        case 'roster': roster=m.list; renderRoster(); break;
+        case 'pad': applyPad(m); break;
+        case 'text': receiveText(m); break;
+        case 'meta': receiveMeta(m); break;
+        case 'end': receiveEnd(m); break;
+        case 'go': case 'skip': if (senders[m.id]) handleReply(m); break;
+      }
+    }
+
+    $('btn-create').onclick = () => {
+      const code = newCode(8); msg('Opening a room…'); busy(true);
+      peer = new Peer(PREFIX+code, peerOpts());
+      peer.on('open', () => {
+        isHost = true;
+        $('pair-choose').classList.add('hidden'); $('pair-wait').classList.remove('hidden');
+        $('code-show').textContent = code; $('host-badge').classList.remove('hidden');
+        $('hub-note').textContent = 'As the hub, keep this page open — other devices connect through it.';
+        const url = pageUrl();
+        if (url && window.QRCode) new QRCode($('qr'), {text:url+'?join='+code, width:158, height:158, correctLevel:QRCode.CorrectLevel.M});
+        msg('');
+        peer.on('connection', onIncoming);
+      });
+      peer.on('error', e => { if (e.type==='unavailable-id'){ peer.destroy(); $('btn-create').onclick(); } else fail(e); });
+    };
+    $('btn-join').onclick = () => {
+      const code = $('code-in').value.trim().toUpperCase();
+      if (code.length < 8){ msg('Enter the 8-character code from the hub device.', true); return; }
+      msg('Connecting…'); busy(true);
+      peer = new Peer(peerOpts());
+      peer.on('open', () => {
+        const c = peer.connect(PREFIX+code, {reliable:true});
+        const t = setTimeout(() => { if (!conns.length){ msg('No room found with that code.', true); busy(false);} }, 12000);
+        c.on('open', () => { c.send(JSON.stringify({t:'hello', name:myName})); });
+        c.on('data', d => {
+          if (typeof d !== 'string'){ if (c._app) onData(d, c); return; }
+          let m; try { m = JSON.parse(d); } catch { return; }
+          if (m.t==='verify'){
+            clearTimeout(t);
+            $('pair-choose').classList.add('hidden');
+            $('join-wait').classList.remove('hidden');
+            $('my-verify').textContent = m.words;
+            msg('');
+            return;
+          }
+          if (m.t==='approved'){
+            c._app = true; conns.push(c);
+            $('pair').classList.add('hidden'); $('app').classList.remove('hidden'); renderRoster();
+            c.on('close', () => { $('roster').innerHTML=''; addChip(myName+' (you)', true);
+              $('hub-note').textContent='The hub device left — reload on all devices to start a new room.'; });
+            return;
+          }
+          if (c._app) onData(d, c);
+        });
+        c.on('close', () => { if (!c._app){ msg('The room owner denied this device.', true); busy(false);
+          $('join-wait').classList.add('hidden'); $('pair-choose').classList.remove('hidden'); } });
+      });
+      peer.on('error', e => { if (e.type==='peer-unavailable'){ msg('No room found with that code.', true); busy(false); } else fail(e); });
+    };
+    $('code-in').addEventListener('keydown', e => { if (e.key==='Enter') $('btn-join').onclick(); });
+    function busy(b){ $('btn-create').disabled=b; $('btn-join').disabled=b; $('code-in').disabled=b; }
+    function fail(e){ msg('Connection problem ('+(e.type||'unknown')+'). Reload to try again.', true); busy(false); }
+
+    function renderRoster(){ $('roster').innerHTML=''; addChip(myName+' (you)', true);
+      for (const n of roster) if (n!==myName) addChip(n); }
+    function addChip(name, me){ const s=document.createElement('span');
+      s.className='chip'+(me?' me':''); s.innerHTML='<span class="dot"></span>'; s.append(name);
+      $('roster').appendChild(s); }
+
+    const pad = $('pad');
+    pad.addEventListener('input', () => {
+      clearTimeout(padTimer);
+      padTimer = setTimeout(() => { padRev = Date.now();
+        broadcast(JSON.stringify({t:'pad', text:pad.value, rev:padRev, from:myName})); }, 120);
+    });
+    function applyPad(m){
+      if (m.rev <= padRev) return;
+      padRev = m.rev;
+      const foc = document.activeElement===pad, pos = pad.selectionStart;
+      pad.value = m.text;
+      if (foc) pad.setSelectionRange(pos, pos);
+      $('pad-status').innerHTML = 'edited on <span class="who"></span>';
+      $('pad-status').querySelector('.who').textContent = m.from;
+      clearTimeout(padNotice); padNotice = setTimeout(() => $('pad-status').textContent='', 2500);
+    }
+    $('pad-copy').onclick = async () => {
+      try { await navigator.clipboard.writeText(pad.value); $('pad-status').textContent='Copied.'; }
+      catch { pad.select(); document.execCommand('copy'); }
+      clearTimeout(padNotice); padNotice = setTimeout(() => $('pad-status').textContent='', 1500);
+    };
+    $('pad-clear').onclick = () => { pad.value=''; pad.dispatchEvent(new Event('input')); };
+
+    document.querySelectorAll('.seg button').forEach(b => b.onclick = () => {
+      document.querySelectorAll('.seg button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      expiry = b.dataset.exp==='burn' ? 'burn' : parseInt(b.dataset.exp, 10);
+    });
+    function burn(row, item){
+      if (item){ if (item.url) URL.revokeObjectURL(item.url); item.parts=null; item.body=null; }
+      row.el.className='burned';
+      row.el.innerHTML='<span class="body">Burned — cleared from this device</span>';
+      setTimeout(() => row.el.remove(), 4000);
+    }
+    function armExpiry(row, item){
+      if (expiry==='burn') return;
+      const total=expiry, t0=Date.now();
+      row.ring.classList.remove('hidden');
+      const iv = setInterval(() => {
+        const left = total - (Date.now()-t0)/1000;
+        if (left<=0){ clearInterval(iv); burn(row, item); return; }
+        row.ring.style.setProperty('--p', (left/total*100)+'%');
+      }, 1000);
+    }
+
+    function beamText(body){
+      if (!body.trim()) return;
+      broadcast(JSON.stringify({t:'text', id:rid(), body, from:myName}));
+      const row = makeRow($('list'), {kind:'text', status:'Beamed'});
+      row.setText(body); row.el.classList.add('done');
+      setTimeout(() => row.el.remove(), 6000);
+    }
+    $('text-send').onclick = () => { beamText($('text-in').value); $('text-in').value=''; };
+    $('text-in').addEventListener('keydown', e => { if (e.key==='Enter') $('text-send').onclick(); });
+    function receiveText(m){
+      const item = {body:m.body};
+      const row = makeRow($('list'), {kind:'text', status:'from '+m.from});
+      row.setText(m.body);
+      const btn = document.createElement('button');
+      btn.className='small'; btn.textContent='Copy';
+      btn.onclick = async () => { try { await navigator.clipboard.writeText(item.body); } catch {}
+        if (expiry==='burn') burn(row, item); else btn.textContent='Copied'; };
+      row.actions.appendChild(btn);
+      armExpiry(row, item);
+    }
+
+    let pendingPaste = null;
+    document.addEventListener('paste', e => {
+      if ($('beam-root').classList.contains('hidden')) return;
+      if ($('app').classList.contains('hidden')) return;
+      const inField = /INPUT|TEXTAREA/.test(document.activeElement.tagName);
+      const files = [...(e.clipboardData?.files || [])];
+      if (files.length){
+        e.preventDefault();
+        pendingPaste = { files };
+        showPasteConfirm(files.length + ' file' + (files.length>1?'s':'') + ' from clipboard (' +
+          files.map(f=>f.name||'image').join(', ').slice(0,80) + ')');
+        return;
+      }
+      if (!inField){
+        const t = e.clipboardData?.getData('text');
+        if (t){ pendingPaste = { text: t };
+          showPasteConfirm('Text: “' + t.slice(0, 90) + (t.length>90?'…':'') + '”'); }
+      }
+    });
+    function showPasteConfirm(desc){
+      $('paste-what').textContent = desc;
+      $('paste-confirm').classList.remove('hidden');
+    }
+    $('paste-yes').onclick = () => {
+      $('paste-confirm').classList.add('hidden');
+      if (!pendingPaste) return;
+      if (pendingPaste.files) sendFiles(pendingPaste.files);
+      else if (pendingPaste.text) beamText(pendingPaste.text);
+      pendingPaste = null;
+    };
+    $('paste-no').onclick = () => { pendingPaste = null; $('paste-confirm').classList.add('hidden'); };
+
+    const drop=$('drop'), input=$('file');
+    drop.onclick = () => input.click();
+    drop.onkeydown = e => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); input.click(); } };
+    input.onchange = () => { sendFiles([...input.files]); input.value=''; };
+    ['dragover','dragenter'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+    ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+    drop.addEventListener('drop', e => sendFiles([...e.dataTransfer.files]));
+
+    const senders={}; let queue=[], sendingNow=false;
+    function sendFiles(files){ if (!conns.some(c=>c.open)) return;
+      queue.push(...files); if (!sendingNow) nextFile(); }
+    function handleReply(m){ const s=senders[m.id]; if (!s) return;
+      if (m.t==='go') s.gos++; s.replies++; s.check(); }
+
+    async function nextFile(){
+      const file = queue.shift();
+      if (!file){ sendingNow=false; return; }
+      sendingNow = true;
+      const id = rid();
+      const row = makeRow($('list'), {kind:'file', title:file.name, size:file.size, status:'Waiting for devices…'});
+      broadcast(JSON.stringify({t:'meta', id, name:file.name, size:file.size, mime:file.type, from:myName}));
+      const peersCount = isHost ? conns.length : Math.max(1, roster.length-1);
+      const ok = await new Promise(res => {
+        const s = senders[id] = { gos:0, replies:0,
+          check(){ if (s.gos>0 && s.replies>=peersCount) fin(true);
+                   else if (s.replies>=peersCount && s.gos===0) fin(false); } };
+        const t1=setTimeout(() => { if (s.gos>0) fin(true); }, 10000);
+        const t2=setTimeout(() => fin(s.gos>0), 45000);
+        function fin(v){ clearTimeout(t1); clearTimeout(t2); delete senders[id]; res(v); }
+        s.check();
+      });
+      if (!ok){ row.setStatus('No device accepted', true); sendingNow=false; nextFile(); return; }
+      row.setStatus('Sending · '+human(file.size));
+      let offset=0;
+      while (offset < file.size){
+        const c = conns.find(x=>x.open);
+        if (!c){ row.setStatus('Failed — disconnected', true); sendingNow=false; return; }
+        while (c.open && c.dataChannel.bufferedAmount > HIGH_WATER) await new Promise(r=>setTimeout(r,50));
+        const part = await file.slice(offset, offset+CHUNK).arrayBuffer();
+        broadcast(frame(id, part));
+        offset += part.byteLength;
+        row.setProgress(offset/file.size);
+      }
+      broadcast(JSON.stringify({t:'end', id}));
+      row.setStatus('Sent'); row.el.classList.add('done');
+      setTimeout(() => row.el.remove(), 6000);
+      nextFile();
+    }
+
+    const incoming={};
+    function receiveMeta(m){
+      const row = makeRow($('list'), {kind:'file', title:m.name, size:m.size, status:'from '+m.from});
+      const it = incoming[m.id] = { name:m.name, size:m.size, mime:m.mime||'application/octet-stream',
+        got:0, parts:[], row, mode:'mem', buffered:0 };
+      const reply = t => broadcast(JSON.stringify({t, id:m.id}));
+      if (m.size > BIG_FILE && FS_OK){
+        it.mode='pending';
+        row.setStatus(human(m.size)+' — choose where to save');
+        const btn=document.createElement('button');
+        btn.className='small'; btn.textContent='Save to disk';
+        btn.onclick = async () => {
+          try {
+            const h = await showSaveFilePicker({suggestedName:m.name});
+            it.writer = await h.createWritable(); it.mode='disk';
+            for (const p of it.parts) await it.writer.write(p);
+            it.parts=[]; btn.remove(); row.setStatus('Receiving to disk…'); reply('go');
+          } catch { row.setStatus('Save cancelled', true); reply('skip'); delete incoming[m.id]; }
+        };
+        row.actions.appendChild(btn);
+      } else {
+        if (m.size > BIG_FILE) row.setStatus('Large file — receiving in memory');
+        reply('go');
+      }
+    }
+    async function receiveChunk(data){
+      let f; try { f = unframe(data); } catch { return; }
+      const it = incoming[f.id]; if (!it) return;
+      it.got += f.payload.byteLength;
+      if (it.mode==='disk') await it.writer.write(f.payload);
+      else {
+        it.parts.push(f.payload); it.buffered += f.payload.byteLength;
+        if (it.mode==='pending' && it.buffered > MEM_CAP){
+          it.row.setStatus('Too large to hold — save not chosen in time', true);
+          it.parts=[]; delete incoming[f.id]; return;
+        }
+      }
+      it.row.setProgress(it.got/it.size);
+    }
+    async function receiveEnd(m){
+      const it = incoming[m.id]; if (!it) return;
+      delete incoming[m.id];
+      const row = it.row;
+      row.el.classList.add('done'); row.setProgress(1);
+      if (it.mode==='disk'){
+        await it.writer.close();
+        if (expiry==='burn') burn(row, it);
+        else { row.setStatus('Saved to disk', false, true); armExpiry(row, it); }
+        return;
+      }
+      const blob = new Blob(it.parts, {type:it.mime});
+      it.parts=null; it.url = URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=it.url; a.download=it.name; a.textContent='Save';
+      a.onclick = () => { if (expiry==='burn') setTimeout(() => burn(row, it), 400); };
+      row.setStatus(human(it.size));
+      row.actions.appendChild(a);
+      armExpiry(row, it);
+    }
+  })();
+
+  // ================================================================
+  // GOOGLE DRIVE (organizer's own account; token stays in this tab)
+  // ================================================================
+  let gToken=null, gExpiry=0, tokenClient=null;
+  const gReady = () => window.google && google.accounts && google.accounts.oauth2;
+  function initTokenClient(){
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/drive.file',
+      callback: () => {}
+    });
+  }
+  function getToken(interactive){
+    return new Promise((res, rej) => {
+      if (gToken && Date.now() < gExpiry - 60000) return res(gToken);
+      tokenClient.callback = r => {
+        if (r.error) return rej(r);
+        gToken = r.access_token;
+        gExpiry = Date.now() + (r.expires_in||3600)*1000;
+        res(gToken);
+      };
+      tokenClient.requestAccessToken({ prompt: interactive ? 'consent' : '' });
+    });
+  }
+  async function gFetch(url, opts={}, retried){
+    const tok = await getToken(false);
+    opts.headers = Object.assign({}, opts.headers, { Authorization: 'Bearer '+tok });
+    const r = await fetch(url, opts);
+    if (r.status === 401 && !retried){ gToken=null; return gFetch(url, opts, true); }
+    return r;
+  }
+  async function driveCreateFolder(name){
+    const r = await gFetch('https://www.googleapis.com/drive/v3/files?fields=id,webViewLink', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name, mimeType:'application/vnd.google-apps.folder' })
+    });
+    if (!r.ok) throw new Error('folder create failed: '+r.status);
+    return r.json();
+  }
+  async function driveUpload(blob, name, folderId){
+    const meta = { name, parents:[folderId] };
+    if (blob.size < 4*1024*1024){
+      const b = 'db' + Date.now() + Math.random().toString(36).slice(2);
+      const head = `--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n` +
+                   JSON.stringify(meta) +
+                   `\r\n--${b}\r\nContent-Type: ${blob.type||'application/octet-stream'}\r\n\r\n`;
+      const body = new Blob([head, blob, `\r\n--${b}--`]);
+      const r = await gFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method:'POST', headers:{'Content-Type':'multipart/related; boundary='+b}, body });
+      if (!r.ok) throw new Error('upload failed: '+r.status);
+      return r.json();
+    }
+    const init = await gFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', 'X-Upload-Content-Type': blob.type||'application/octet-stream'},
+      body: JSON.stringify(meta) });
+    if (!init.ok) throw new Error('upload init failed: '+init.status);
+    const loc = init.headers.get('Location');
+    const put = await fetch(loc, { method:'PUT', body: blob });
+    if (!put.ok) throw new Error('upload put failed: '+put.status);
+    return put.json();
+  }
+
+  // ================================================================
+  // COLLECT MODE — organizer (PIN rate-limit + quotas)
+  // ================================================================
+  function initCollect(){
+    if (GOOGLE_CLIENT_ID.startsWith('PASTE_')){
+      setLine($('g-status'), 'Setup needed: the site owner has not added a Google Client ID yet (see SETUP guide).', 'bad');
+      $('g-signin').disabled = true;
+      return;
+    }
+    const arm = () => { initTokenClient();
+      $('g-signin').onclick = async () => {
+        setLine($('g-status'), 'Opening Google sign-in…');
+        try {
+          await getToken(true);
+          setLine($('g-status'), 'Drive connected — access lives only in this tab.', 'ok');
+          $('c-step2').classList.remove('hidden');
+          $('ev-name').focus();
+        } catch { setLine($('g-status'), 'Sign-in was cancelled or blocked. Try again.', 'bad'); }
+      };
+    };
+    if (gReady()) arm();
+    else { const iv = setInterval(() => { if (gReady()){ clearInterval(iv); arm(); } }, 200);
+           setTimeout(() => clearInterval(iv), 15000); }
+  }
+
+  $('ev-start').onclick = async () => {
+    const name = $('ev-name').value.trim();
+    if (!name){ setLine($('ev-status'), 'Give your event a name.', 'bad'); return; }
+    const pin = $('ev-pin').value.trim();
+    $('ev-start').disabled = true;
+    setLine($('ev-status'), 'Creating Drive folder…');
+    let folder;
+    try { folder = await driveCreateFolder('DropBeam – ' + name); }
+    catch (e){ setLine($('ev-status'), 'Could not create the folder ('+e.message+').', 'bad'); $('ev-start').disabled=false; return; }
+    setLine($('ev-status'), 'Opening the event room…');
+    startCollectRoom(name, pin, folder);
+  };
+
+  function startCollectRoom(evName, pin, folder){
+    const code = newCode(8);
+    const cpeer = new Peer(CPREFIX + code, peerOpts());
+    const parts = new Map();
+    let nFiles = 0, roomBytes = 0;
+
+    cpeer.on('error', e => {
+      if (e.type==='unavailable-id'){ cpeer.destroy(); startCollectRoom(evName, pin, folder); return; }
+      setLine($('ev-status'), 'Connection problem ('+(e.type||'unknown')+'). Reload to retry.', 'bad');
+      $('ev-start').disabled = false;
+    });
+
+    cpeer.on('open', () => {
+      $('c-step1').classList.add('hidden');
+      $('c-step2').classList.add('hidden');
+      $('c-live').classList.remove('hidden');
+      $('live-event').textContent = evName;
+      $('c-folder').href = folder.webViewLink;
+      const url = pageUrl();
+      const link = url ? url + '?upload=' + code : null;
+      if (link && window.QRCode)
+        new QRCode($('c-qr'), {text:link, width:180, height:180, correctLevel:QRCode.CorrectLevel.M});
+      $('c-link-line').textContent = link
+        ? 'Participants scan this QR — no app, no Google account needed.'
+        : 'Host this page on a URL to get a scannable link. Room code: ' + code;
+      $('c-copylink').onclick = async () => {
+        try { await navigator.clipboard.writeText(link || code); $('c-copylink').textContent='Copied';
+          setTimeout(() => $('c-copylink').textContent='Copy upload link', 1500); } catch {}
+      };
+      $('c-stop').onclick = () => {
+        if (!confirm('Stop collecting? Participants will no longer be able to upload.')) return;
+        cpeer.destroy();
+        $('c-link-line').textContent = 'Collection stopped. Your files are safe in Drive.';
+        $('c-qr').innerHTML = '';
+      };
+    });
+
+    cpeer.on('connection', c => {
+      parts.set(c, { name:null, files:{}, nFiles:0, nBytes:0, pinTries:0 });
+      c.on('open', () => c.send(JSON.stringify({t:'info', event:evName, needPin: !!pin})));
+      c.on('close', () => parts.delete(c));
+      c.on('data', d => onCollectData(c, d));
+    });
+
+    function onCollectData(c, d){
+      const p = parts.get(c); if (!p) return;
+      if (typeof d !== 'string'){
+        if (!p.name) return;
+        let f; try { f = unframe(d); } catch { return; }
+        const it = p.files[f.id]; if (!it) return;
+        it.parts.push(f.payload); it.got += f.payload.byteLength;
+        if (it.got > it.size + CHUNK){
+          it.parts = null; delete p.files[f.id];
+          it.row.setStatus('rejected — size mismatch', true);
+          return;
+        }
+        it.row.setProgress(it.got / it.size * 0.5);
+        return;
+      }
+      let m; try { m = JSON.parse(d); } catch { return; }
+
+      if (m.t === 'enter'){
+        if (pin && m.pin !== pin){
+          p.pinTries++;
+          if (p.pinTries >= PIN_TRIES){ c.send(JSON.stringify({t:'deny', reason:'Too many wrong PINs'})); c.close(); return; }
+          c.send(JSON.stringify({t:'deny', reason:'Wrong PIN ('+(PIN_TRIES-p.pinTries)+' tries left)'}));
+          return;
+        }
+        p.name = String(m.name || 'Anonymous').replace(/[\x00-\x1f]/g,'').slice(0, 60) || 'Anonymous';
+        c.send(JSON.stringify({t:'welcome'}));
+        $('n-people').textContent = [...parts.values()].filter(x => x.name).length;
+        return;
+      }
+      if (!p.name) return;
+
+      if (m.t === 'meta'){
+        const deny = reason => c.send(JSON.stringify({t:'deny-file', id:m.id, reason}));
+        if (typeof m.size !== 'number' || m.size <= 0) return deny('Invalid file');
+        if (m.size > MAX_FILE)                return deny('Files over '+human(MAX_FILE)+' are not accepted');
+        if (p.nFiles >= MAX_P_FILES)          return deny('Limit reached: '+MAX_P_FILES+' files per person');
+        if (p.nBytes + m.size > MAX_P_BYTES)  return deny('Limit reached: '+human(MAX_P_BYTES)+' per person');
+        if (roomBytes + m.size > MAX_ROOM_BYTES) return deny('This event has reached its total size limit');
+        p.nFiles++; p.nBytes += m.size; roomBytes += m.size;
+        p.files[m.id] = { name:String(m.name||'file').slice(0,120), size:m.size, mime:m.mime, got:0, parts:[],
+          row: makeRow($('c-list'), {kind:'file', title:m.name, size:m.size, from:p.name, status:'receiving…'}) };
+        c.send(JSON.stringify({t:'go', id:m.id}));
+      }
+      if (m.t === 'end'){
+        const it = p.files[m.id]; if (!it) return;
+        delete p.files[m.id];
+        const blob = new Blob(it.parts, {type: it.mime || 'application/octet-stream'});
+        it.parts = null;
+        it.row.setStatus('uploading to Drive…');
+        const safe = p.name.replace(/[\\/:*?"<>|]/g,'_');
+        driveUpload(blob, safe + ' — ' + it.name, folder.id)
+          .then(() => {
+            it.row.setProgress(1); it.row.el.classList.add('done');
+            it.row.setStatus('in Drive', false, true);
+            nFiles++; $('n-files').textContent = nFiles;
+            if (c.open) c.send(JSON.stringify({t:'stored', id:m.id}));
+          })
+          .catch(e => {
+            it.row.setStatus('Drive upload failed — '+e.message, true);
+            if (c.open) c.send(JSON.stringify({t:'store-fail', id:m.id}));
+          });
+      }
+    }
+  }
+
+  // ================================================================
+  // PARTICIPANT VIEW
+  // ================================================================
+  function startParticipant(code){
+    const pmsg = (t,cls) => setLine($('p-msg'), t, cls);
+    let conn = null, queue = [], sending = false;
+    const waiting = {};
+
+    const ppeer = new Peer(peerOpts());
+    ppeer.on('open', () => {
+      const c = ppeer.connect(CPREFIX + code, {reliable:true});
+      const t = setTimeout(() => { if (!conn) pmsg('Could not find this event. It may have ended — ask the organizer.', 'bad'); }, 12000);
+      c.on('open', () => { clearTimeout(t); conn = c; });
+      c.on('data', onP);
+      c.on('close', () => pmsg('The event has ended or the organizer went offline.', 'bad'));
+    });
+    ppeer.on('error', e => {
+      if (e.type==='peer-unavailable') pmsg('Could not find this event. It may have ended.', 'bad');
+      else pmsg('Connection problem ('+(e.type||'unknown')+'). Reload to retry.', 'bad');
+    });
+
+    function onP(d){
+      if (typeof d !== 'string') return;
+      let m; try { m = JSON.parse(d); } catch { return; }
+      if (m.t==='info'){
+        $('p-title').textContent = m.event;
+        $('p-gate').classList.remove('hidden');
+        if (m.needPin) $('p-pin-wrap').classList.remove('hidden');
+        pmsg('');
+      }
+      if (m.t==='welcome'){
+        $('p-gate').classList.add('hidden');
+        $('p-upload').classList.remove('hidden');
+        pmsg('');
+      }
+      if (m.t==='deny') pmsg(m.reason || 'Not allowed.', 'bad');
+      if (m.t==='go' && waiting[m.id]) waiting[m.id]._go && waiting[m.id]._go();
+      if (m.t==='deny-file' && waiting[m.id]){
+        waiting[m.id].setStatus(m.reason, true);
+        waiting[m.id]._go && waiting[m.id]._go(false);
+        delete waiting[m.id];
+      }
+      if (m.t==='stored' && waiting[m.id]){
+        waiting[m.id].setStatus('delivered', false, true);
+        waiting[m.id].el.classList.add('done');
+        delete waiting[m.id];
+        $('p-thanks').classList.remove('hidden');
+      }
+      if (m.t==='store-fail' && waiting[m.id]){
+        waiting[m.id].setStatus('organizer could not save this — try again', true);
+        delete waiting[m.id];
+      }
+    }
+
+    $('p-enter').onclick = () => {
+      if (!conn){ pmsg('Still connecting — one moment…'); return; }
+      conn.send(JSON.stringify({t:'enter', name:$('p-name').value.trim(), pin:$('p-pin').value.trim()}));
+    };
+    $('p-name').addEventListener('keydown', e => { if (e.key==='Enter') $('p-enter').onclick(); });
+    $('p-pin').addEventListener('keydown', e => { if (e.key==='Enter') $('p-enter').onclick(); });
+
+    const pd = $('p-drop'), pf = $('p-file');
+    pd.onclick = () => pf.click();
+    pd.onkeydown = e => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); pf.click(); } };
+    pf.onchange = () => { queue.push(...pf.files); pf.value=''; if (!sending) nextUp(); };
+    ['dragover','dragenter'].forEach(ev => pd.addEventListener(ev, e => { e.preventDefault(); pd.classList.add('over'); }));
+    ['dragleave','drop'].forEach(ev => pd.addEventListener(ev, e => { e.preventDefault(); pd.classList.remove('over'); }));
+    pd.addEventListener('drop', e => { queue.push(...e.dataTransfer.files); if (!sending) nextUp(); });
+
+    async function nextUp(){
+      const file = queue.shift();
+      if (!file){ sending=false; return; }
+      sending = true;
+      if (!conn || !conn.open){ pmsg('Not connected — reload and try again.', 'bad'); sending=false; return; }
+      const id = rid();
+      const row = makeRow($('p-list'), {kind:'file', title:file.name, size:file.size, status:'waiting…'});
+      waiting[id] = row;
+      conn.send(JSON.stringify({t:'meta', id, name:file.name, size:file.size, mime:file.type}));
+      const ok = await new Promise(res => {
+        row._go = (v=true) => res(v);
+        setTimeout(() => res(false), 20000);
+      });
+      if (!ok){ if (waiting[id]){ row.setStatus('not accepted — see message', true); delete waiting[id]; }
+        sending=false; nextUp(); return; }
+      row.setStatus('sending · '+human(file.size));
+      let off=0;
+      while (off < file.size){
+        if (!conn.open){ row.setStatus('connection lost', true); sending=false; return; }
+        while (conn.open && conn.dataChannel.bufferedAmount > HIGH_WATER) await new Promise(r=>setTimeout(r,50));
+        const part = await file.slice(off, off+CHUNK).arrayBuffer();
+        conn.send(frame(id, part));
+        off += part.byteLength;
+        row.setProgress(off/file.size);
+      }
+      conn.send(JSON.stringify({t:'end', id}));
+      row.setStatus('delivering…');
+      sending=false; nextUp();
+    }
+  }
+})();
+</script>
+</body>
+</html>
