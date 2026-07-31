@@ -127,7 +127,7 @@
     display: inline-flex; align-items: center; gap: 9px;
     padding: 7px 15px 7px 12px; border-radius: 999px;
     background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
-    backdrop-filter: blur(8px);
+
     font: 500 12.5px/1 var(--sans); color: #d7d3ee; letter-spacing: .01em;
     margin-bottom: 30px;
   }
@@ -152,7 +152,7 @@
   }
   .hero .choices #mode-beam:hover { background: #35e2ce; box-shadow: none; }
   .hero .choices .alt { background: rgba(255,255,255,.04); color: #eceafb;
-    border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(6px); }
+    border: 1px solid rgba(255,255,255,.14); }
   .hero .choices .alt:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.24); }
   .hero .fine { margin-top: 32px; font: 500 11.5px/1 var(--mono); letter-spacing: .16em;
     text-transform: uppercase; color: #8a83b4; }
@@ -165,34 +165,38 @@
   }
   @media (min-width: 620px) { .modeboard { grid-template-columns: 1fr 1fr; } }
   .modecard {
+    display: block;
     text-align: left; border-radius: 18px; padding: 22px;
-    background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.09);
-    backdrop-filter: blur(8px);
+    background: #14141c; border: 1px solid rgba(255,255,255,.09);
     transition: transform .18s, border-color .18s, background .18s;
+    cursor: pointer;
   }
   .modecard:hover { transform: translateY(-3px); background: rgba(255,255,255,.06); }
   .modecard.beam:hover { border-color: rgba(139,92,246,.55); }
   .modecard.collect:hover { border-color: rgba(45,212,191,.55); }
-  .modecard .mc-top { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
+  .modecard .mc-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .modecard .mc-top > span { display: block; }
+  .modecard .mc-top > span:last-child { padding-top: 1px; }
   .modecard .mc-ic {
-    width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
-    display: grid; place-items: center;
+    width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
     background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
   }
+  .modecard .mc-ic svg { width: 20px; height: 20px; display: block; }
   .modecard.beam .mc-ic { color: var(--teal); }
   .modecard.collect .mc-ic { color: #5eead4; }
-  .modecard .mc-name { font: 600 16.5px/1 var(--display); letter-spacing: -.005em; }
+  .modecard .mc-name { font: 600 16.5px/1.15 var(--display); letter-spacing: -.005em; }
   .modecard .mc-for { font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
-    color: #9a94c0; margin-top: 5px; }
-  .modecard .mc-desc { font-size: 14px; color: #b4afd0; line-height: 1.6; }
-  .modecard .mc-flow { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 15px;
+    color: #9a94c0; margin-top: 6px; }
+  .modecard .mc-desc { display: block; font-size: 14px; color: #b4afd0; line-height: 1.6; margin-top: 2px; }
+  .modecard .mc-flow { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 16px;
     font: 500 11.5px/1 var(--mono); color: #cfcae8; }
   .modecard .mc-flow .step {
     padding: 5px 9px; border-radius: 7px; background: rgba(255,255,255,.06);
     border: 1px solid rgba(255,255,255,.08); }
   .modecard .mc-flow .arr { color: #7d76a8; }
   .modecard .mc-go {
-    display: inline-flex; align-items: center; gap: 6px; margin-top: 16px;
+    display: flex; align-items: center; gap: 6px; margin-top: 16px;
     font: 600 13px/1 var(--sans);
   }
   .modecard.beam .mc-go { color: var(--teal); }
@@ -225,21 +229,22 @@
   }
   .feature .f-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
   .feature .f-badge {
-    width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
-    display: grid; place-items: center; color: var(--fx-solid, var(--teal));
+    width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; color: var(--fx-solid, var(--teal));
     background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
   }
+  .feature .f-badge svg { width: 19px; height: 19px; display: block; }
   .feature .f-num { font: 500 12px/1 var(--mono); letter-spacing: .04em; color: #9aa4b0; }
   .feature h3 { font-family: var(--display); font-size: clamp(22px, 2.7vw, 29px); font-weight: 600; letter-spacing: -.015em;
     margin-bottom: 20px; }
   .feature ul.points { list-style: none; display: grid; gap: 14px; }
   .feature ul.points li { position: relative; padding-left: 26px; font-size: 15.5px; color: #b8c2cc; line-height: 1.6; }
   .feature ul.points li::before {
-    content: ""; position: absolute; left: 0; top: 3px; width: 17px; height: 17px; border-radius: 50%;
+    content: ""; position: absolute; left: 0; top: 4px; width: 16px; height: 16px; border-radius: 50%;
     background: var(--fx-solid, var(--teal)); opacity: .16;
   }
   .feature ul.points li::after {
-    content: ""; position: absolute; left: 6px; top: 9px; width: 5px; height: 5px; border-radius: 50%;
+    content: ""; position: absolute; left: 5.5px; top: 9.5px; width: 5px; height: 5px; border-radius: 50%;
     background: var(--fx-solid, var(--teal));
   }
   .feature ul.points li b { color: var(--text); font-weight: 600; }
@@ -266,7 +271,7 @@
     border: 1px solid rgba(255,255,255,.1);
     border-radius: 15px; padding: 22px 24px;
     box-shadow: 0 24px 60px rgba(0,0,0,.45);
-    backdrop-filter: blur(4px);
+
   }
   .mockcard .live {
     display: inline-flex; align-items: center; gap: 7px;
@@ -476,8 +481,14 @@
     .hero .status { margin-bottom: 22px; font-size: 12px; }
     .hero h1 { font-size: clamp(34px, 10vw, 46px); letter-spacing: -.025em; }
     .hero .lede2 { font-size: 16px; margin-top: 20px; }
-    .modeboard { margin-top: 34px; gap: 13px; }
-    .modecard { padding: 18px; }
+    .modeboard { margin-top: 34px; gap: 13px; grid-template-columns: 1fr !important; }
+    .modecard { padding: 18px; display: block !important; width: 100%; }
+    .modecard .mc-top { display: flex !important; flex-direction: row !important;
+      align-items: center; gap: 11px; width: 100%; }
+    .modecard .mc-top > span:last-child { flex: 1 1 auto; min-width: 0; }
+    .modecard .mc-desc { display: block; width: 100%; margin-top: 12px; }
+    .modecard .mc-flow { display: flex !important; flex-wrap: wrap; width: 100%; }
+    .modecard .mc-go { display: inline-flex !important; }
     .hero .fine { margin-top: 26px; font-size: 10.5px; }
 
     section.block { padding: 64px 0 6px; }
@@ -527,10 +538,12 @@
 
   /* comfortable tap targets on touch devices */
   @media (hover: none) and (pointer: coarse) {
-    button, .modecard, .dropzone, ul.items li a, ul.items li button,
-    .foot-links a, .legal-back { min-height: 44px; display: inline-flex; align-items: center; }
-    .foot-links a, .legal-back { min-height: 40px; }
+    button, ul.items li a, ul.items li button { min-height: 44px; }
+    .foot-links a, .legal-back { min-height: 40px; display: inline-flex; align-items: center; }
     .seg button { min-height: 42px; }
+    /* cards and dropzones must NOT become flex — keep their stacked layout,
+       just give them comfortable padding for touch */
+    .modecard { padding: 20px; }
   }
 
   /* ============ animated beam-mark (splash + spinner) ============ */
@@ -618,7 +631,7 @@
     <symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L8 8m4-4l4 4M5 20h14"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></symbol>
     <symbol id="i-beam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h6m4 0h6M12 4v6m0 4v6"/><circle cx="12" cy="12" r="2.4"/></symbol>
-    <symbol id="i-collect" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13v4a2 2 0 002 2h10a2 2 0 002-2v-4"/><path d="M12 4v9m0 0l-3.5-3.5M12 13l3.5-3.5"/></symbol>
+    <symbol id="i-collect" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 14v3a2 2 0 002 2h10a2 2 0 002-2v-3"/><path d="M12 5v9m0 0l-3.5-3.5M12 14l3.5-3.5"/></symbol>
     <symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 6l6 6-6 6"/></symbol>
   </defs>
 </svg>
@@ -1053,6 +1066,8 @@
   Before launch you may add a Subresource Integrity hash to the PeerJS tag —
   the SETUP guide shows the one-line command to generate it.
 -->
+<!-- Optional local config (git-ignored). Sets window.DROPBEAM_CONFIG. Safe if absent. -->
+<script src="config.js" onerror="void 0"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
 <!-- QR generator embedded inline (qrcodejs, MIT) — no CDN dependency, always available -->
 <script>
@@ -1065,10 +1080,13 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
   "use strict";
 
   // ============ SITE OWNER CONFIG — see SETUP guide ============
-  const GOOGLE_CLIENT_ID = "779808637596-3eib8gegsm9k1h0iubd0aui2io97i4gi.apps.googleusercontent.com";
-  // Optional: run your own PeerJS signaling server and set it here, e.g.
-  // const SIGNALING = { host:'peer.yourdomain.com', port:443, secure:true, path:'/' };
-  const SIGNALING = null;
+  // Your Google Client ID is read from an optional config.js (git-ignored) if present,
+  // otherwise falls back to the placeholder. See config.example.js.
+  const CFG = (typeof window !== 'undefined' && window.DROPBEAM_CONFIG) || {};
+  const GOOGLE_CLIENT_ID = CFG.GOOGLE_CLIENT_ID || "PASTE_YOUR_CLIENT_ID_HERE.apps.googleusercontent.com";
+  // Optional: run your own PeerJS signaling server, e.g.
+  // { host:'peer.yourdomain.com', port:443, secure:true, path:'/' }
+  const SIGNALING = CFG.SIGNALING || null;
   // Collect-mode quotas:
   const MAX_FILE      = 1  * 1024 * 1024 * 1024;   // 1 GB per file
   const MAX_P_FILES   = 20;                        // files per participant

@@ -1,0 +1,9 @@
+# Local configuration containing your Google Client ID — never commit this.
+config.js
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
