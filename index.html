@@ -77,13 +77,14 @@
 
   /* ============ brand ============ */
   .brand {
-    display: inline-flex; align-items: center; gap: 7px;
-    font: 700 20px/1 var(--display); letter-spacing: -.03em;
+    display: inline-flex; align-items: center; gap: 8px;
+    font: 700 21px/1 var(--display); letter-spacing: -.03em;
     color: #fff; text-decoration: none;
   }
-  .brand .lite { font-weight: 700; color: var(--teal); margin-left: -.02em; }
+  .brand .word { white-space: nowrap; }
+  .brand .lite { font-weight: 700; color: var(--teal); }
   /* animated beam mark beside the wordmark — same animation as the loader */
-  .brand .db-mark { width: 22px; height: 22px; flex-shrink: 0; overflow: visible; }
+  .brand .db-mark { width: 27px; height: 27px; flex-shrink: 0; overflow: visible; }
   .brand .db-mark .db-beam { stroke: var(--teal); stroke-width: 36; }
   .brand .db-mark .db-center { fill: var(--teal); r: 20px; }
   .brand .db-mark .db-logo { transform-origin: 256px 256px;
@@ -313,6 +314,32 @@
   footer.land .fmono { font: 500 11px/2.2 var(--mono); letter-spacing: .18em; text-transform: uppercase; }
   footer.land b { color: var(--text); font-weight: 500; }
   footer.land .brand { justify-content: center; display: inline-flex; margin-bottom: 10px; }
+  .foot-links { margin-top: 18px; display: flex; gap: 10px; align-items: center; justify-content: center; }
+  .foot-links a { color: var(--dim); text-decoration: none; font-size: 13px; transition: color .15s; }
+  .foot-links a:hover { color: var(--teal); }
+  .foot-links .dot-sep { color: #3a4550; }
+
+  /* ============ LEGAL PAGES ============ */
+  #legal-zone .legal-back { color: var(--dim); text-decoration: none; font-size: 14px; transition: color .15s; }
+  #legal-zone .legal-back:hover { color: var(--teal); }
+  .legal { max-width: 760px; padding: 20px 0 100px; }
+  .legal h1 { font-family: var(--display); font-size: clamp(30px, 5vw, 40px); font-weight: 700;
+    letter-spacing: -.025em; color: #fff; margin-bottom: 6px; }
+  .legal .legal-updated { font: 500 12px/1 var(--mono); letter-spacing: .06em; color: #6f7b88;
+    margin-bottom: 28px; }
+  .legal h2 { font-family: var(--display); font-size: 19px; font-weight: 600; letter-spacing: -.01em;
+    color: #fff; margin: 30px 0 10px; }
+  .legal p { color: #b8c2cc; font-size: 15.5px; line-height: 1.7; margin-bottom: 12px; }
+  .legal ul { margin: 0 0 12px; padding-left: 4px; list-style: none; }
+  .legal ul li { position: relative; padding-left: 20px; color: #b8c2cc; font-size: 15.5px;
+    line-height: 1.65; margin-bottom: 8px; }
+  .legal ul li::before { content: ""; position: absolute; left: 2px; top: 9px; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--teal); }
+  .legal b { color: var(--text); font-weight: 600; }
+  .legal a { color: var(--teal); text-decoration: none; }
+  .legal a:hover { text-decoration: underline; }
+  .legal code { font: 500 13.5px/1 var(--mono); background: var(--panel2); border: 1px solid var(--line);
+    border-radius: 5px; padding: 2px 6px; color: var(--teal-dim); }
 
   .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.in { opacity: 1; transform: none; }
@@ -470,11 +497,39 @@
     .approval { gap: 8px; }
     .approval .who { min-width: 100%; }
     .qrbox img, .qrbox canvas { max-width: 82vw; height: auto; }
+    .qr-fallback .qf-link { font-size: 12px; }
+
+    /* brand + legal on mobile */
+    .brand { font-size: 19px; }
+    .brand .db-mark { width: 24px; height: 24px; }
+    .legal { padding: 12px 0 72px; }
+    .legal h1 { font-size: 27px; }
+    .legal h2 { font-size: 17px; margin-top: 26px; }
+    .legal p, .legal ul li { font-size: 15px; }
+    #legal-zone nav.bar { padding: 16px 0 12px; }
+
+    /* splash scales down */
+    #splash-mark { width: 92px; height: 92px; }
+    .splash-word { font-size: 19px; }
+    .splash-tag { font-size: 10px; letter-spacing: .18em; }
+  }
+
+  /* very small phones */
+  @media (max-width: 380px) {
+    .hero h1 { font-size: 31px; }
+    .hero .lede2 { font-size: 15px; }
+    .modecard { padding: 15px; }
+    .modecard .mc-name { font-size: 15.5px; }
+    .card { padding: 15px; }
+    #code-show { font-size: 21px; letter-spacing: .14em; }
+    .brand { font-size: 18px; }
   }
 
   /* comfortable tap targets on touch devices */
   @media (hover: none) and (pointer: coarse) {
-    button, .modecard, .dropzone, ul.items li a, ul.items li button { min-height: 44px; }
+    button, .modecard, .dropzone, ul.items li a, ul.items li button,
+    .foot-links a, .legal-back { min-height: 44px; display: inline-flex; align-items: center; }
+    .foot-links a, .legal-back { min-height: 40px; }
     .seg button { min-height: 42px; }
   }
 
@@ -573,7 +628,7 @@
 ================================================================ -->
 <div id="landing">
   <nav class="bar wrap">
-    <a class="brand" href="./"><svg class="db-mark" viewBox="0 0 512 512" aria-hidden="true"><g class="db-logo"><line class="db-beam b1" x1="256" y1="256" x2="256" y2="115"/><line class="db-beam b2" x1="256" y1="256" x2="356" y2="156"/><line class="db-beam b3" x1="256" y1="256" x2="397" y2="256"/><line class="db-beam b4" x1="256" y1="256" x2="356" y2="356"/><line class="db-beam b5" x1="256" y1="256" x2="256" y2="397"/><line class="db-beam b6" x1="256" y1="256" x2="156" y2="356"/><line class="db-beam b7" x1="256" y1="256" x2="115" y2="256"/><line class="db-beam b8" x1="256" y1="256" x2="156" y2="156"/><circle class="db-center" cx="256" cy="256" r="15"/></g></svg>drop<span class="lite">beam</span></a>
+    <a class="brand" href="./"><svg class="db-mark" viewBox="0 0 512 512" aria-hidden="true"><g class="db-logo"><line class="db-beam b1" x1="256" y1="256" x2="256" y2="115"/><line class="db-beam b2" x1="256" y1="256" x2="356" y2="156"/><line class="db-beam b3" x1="256" y1="256" x2="397" y2="256"/><line class="db-beam b4" x1="256" y1="256" x2="356" y2="356"/><line class="db-beam b5" x1="256" y1="256" x2="256" y2="397"/><line class="db-beam b6" x1="256" y1="256" x2="156" y2="356"/><line class="db-beam b7" x1="256" y1="256" x2="115" y2="256"/><line class="db-beam b8" x1="256" y1="256" x2="156" y2="156"/><circle class="db-center" cx="256" cy="256" r="15"/></g></svg><span class="word">drop<span class="lite">beam</span></span></a>
     <span class="navnote">Open source · Serverless</span>
   </nav>
 
@@ -729,10 +784,99 @@
   </section>
 
   <footer class="land">
-    <a class="brand" href="./"><svg class="db-mark" viewBox="0 0 512 512" aria-hidden="true"><g class="db-logo"><line class="db-beam b1" x1="256" y1="256" x2="256" y2="115"/><line class="db-beam b2" x1="256" y1="256" x2="356" y2="156"/><line class="db-beam b3" x1="256" y1="256" x2="397" y2="256"/><line class="db-beam b4" x1="256" y1="256" x2="356" y2="356"/><line class="db-beam b5" x1="256" y1="256" x2="256" y2="397"/><line class="db-beam b6" x1="256" y1="256" x2="156" y2="356"/><line class="db-beam b7" x1="256" y1="256" x2="115" y2="256"/><line class="db-beam b8" x1="256" y1="256" x2="156" y2="156"/><circle class="db-center" cx="256" cy="256" r="15"/></g></svg>drop<span class="lite">beam</span></a><br>
+    <a class="brand" href="./"><svg class="db-mark" viewBox="0 0 512 512" aria-hidden="true"><g class="db-logo"><line class="db-beam b1" x1="256" y1="256" x2="256" y2="115"/><line class="db-beam b2" x1="256" y1="256" x2="356" y2="156"/><line class="db-beam b3" x1="256" y1="256" x2="397" y2="256"/><line class="db-beam b4" x1="256" y1="256" x2="356" y2="356"/><line class="db-beam b5" x1="256" y1="256" x2="256" y2="397"/><line class="db-beam b6" x1="256" y1="256" x2="156" y2="356"/><line class="db-beam b7" x1="256" y1="256" x2="115" y2="256"/><line class="db-beam b8" x1="256" y1="256" x2="156" y2="156"/><circle class="db-center" cx="256" cy="256" r="15"/></g></svg><span class="word">drop<span class="lite">beam</span></span></a><br>
     <span class="fmono">Open source · No server · No accounts · No tracking</span><br>
     files travel device-to-device, <b>end-to-end encrypted</b>
+    <div class="foot-links">
+      <a href="?page=privacy">Privacy Policy</a>
+      <span class="dot-sep">·</span>
+      <a href="?page=terms">Terms of Use</a>
+    </div>
   </footer>
+</div>
+
+<!-- ================================================================
+     LEGAL PAGES
+================================================================ -->
+<div id="legal-zone" class="hidden">
+  <nav class="bar wrap">
+    <a class="brand" href="./"><svg class="db-mark" viewBox="0 0 512 512" aria-hidden="true"><g class="db-logo"><line class="db-beam b1" x1="256" y1="256" x2="256" y2="115"/><line class="db-beam b2" x1="256" y1="256" x2="356" y2="156"/><line class="db-beam b3" x1="256" y1="256" x2="397" y2="256"/><line class="db-beam b4" x1="256" y1="256" x2="356" y2="356"/><line class="db-beam b5" x1="256" y1="256" x2="256" y2="397"/><line class="db-beam b6" x1="256" y1="256" x2="156" y2="356"/><line class="db-beam b7" x1="256" y1="256" x2="115" y2="256"/><line class="db-beam b8" x1="256" y1="256" x2="156" y2="156"/><circle class="db-center" cx="256" cy="256" r="15"/></g></svg><span class="word">drop<span class="lite">beam</span></span></a>
+    <a class="legal-back" href="./">← Back</a>
+  </nav>
+
+  <!-- PRIVACY -->
+  <article id="legal-privacy" class="legal wrap hidden">
+    <h1>Privacy Policy</h1>
+    <p class="legal-updated">Last updated: 2026</p>
+
+    <p>DropBeam is built so that we collect nothing. This policy explains, plainly, what that means.</p>
+
+    <h2>1. We operate no server and store no files</h2>
+    <p>DropBeam is a single web page that runs entirely in your browser. When you share files or text, they travel <b>directly between devices</b> using an encrypted peer-to-peer connection (WebRTC). Your files and messages are never uploaded to, stored on, or seen by DropBeam or its operators. When you close the tab, anything held in the page is gone.</p>
+
+    <h2>2. Information we do not collect</h2>
+    <p>We do not require accounts, and we do not collect names, email addresses, files, message contents, IP-address logs, analytics, cookies, advertising identifiers, or location data. There is no database.</p>
+
+    <h2>3. Third-party services</h2>
+    <p>To connect two devices, DropBeam uses a public "signalling" service (PeerJS) that helps browsers find each other. This service only relays the small connection-handshake messages needed to establish a link; it does not receive your files or message contents. Because peer-to-peer connections work by exchanging network addresses, the two devices in a session may become aware of each other's IP addresses — this is inherent to any direct connection and is not recorded by us.</p>
+    <p>The optional <b>Collect</b> feature uses Google Sign-In and the Google Drive API so that an event organiser can save uploads to <b>their own</b> Google Drive. When you use this feature, your interaction with Google is governed by <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>. DropBeam requests only the narrow <code>drive.file</code> permission, which limits access to files the app itself creates. Your Google credentials stay in your browser and are never sent to us.</p>
+
+    <h2>4. Children</h2>
+    <p>DropBeam is not directed to children under 13 (or the minimum age of digital consent in your country). We do not knowingly collect information from children.</p>
+
+    <h2>5. Security</h2>
+    <p>Transfers are end-to-end encrypted in transit by the WebRTC protocol. However, no method of transmission is perfectly secure, and you are responsible for the devices and networks you use.</p>
+
+    <h2>6. Changes</h2>
+    <p>Because DropBeam is open source, this policy may be updated by whoever operates a given deployment. Check this page for the current version.</p>
+
+    <h2>7. Contact</h2>
+    <p>DropBeam is provided as open-source software. For questions about a specific deployment, contact the operator of the site you are using.</p>
+  </article>
+
+  <!-- TERMS -->
+  <article id="legal-terms" class="legal wrap hidden">
+    <h1>Terms of Use</h1>
+    <p class="legal-updated">Last updated: 2026</p>
+
+    <p>By using DropBeam, you agree to these terms. If you do not agree, do not use the service.</p>
+
+    <h2>1. What DropBeam is</h2>
+    <p>DropBeam is a free, open-source tool for transferring files and text directly between devices, and for collecting file submissions into a user's own Google Drive. It is provided as a utility, "as is," without any hosted service, account, or storage on our part.</p>
+
+    <h2>2. Acceptable use</h2>
+    <p>You agree that you will <b>not</b> use DropBeam to transmit, share, collect, or store any content that:</p>
+    <ul>
+      <li>is illegal, or facilitates illegal activity, under any law that applies to you;</li>
+      <li>infringes the intellectual-property, privacy, or other rights of others;</li>
+      <li>contains malware, viruses, or code intended to harm or gain unauthorised access to systems;</li>
+      <li>is sexual content involving minors, or otherwise exploits or endangers minors;</li>
+      <li>harasses, threatens, defames, or incites violence or hatred against any person or group;</li>
+      <li>violates the privacy of others, including sharing personal data without consent.</li>
+    </ul>
+    <p>You are solely responsible for the content you transfer and for obtaining any consents required from the people you share with or collect from.</p>
+
+    <h2>3. No monitoring, no liability for content</h2>
+    <p>Because transfers are peer-to-peer and nothing passes through our servers, we do not and cannot monitor, review, or control the content you send or receive. Responsibility for that content rests entirely with the users involved.</p>
+
+    <h2>4. Collect feature</h2>
+    <p>If you use the Collect feature, you connect your own Google account and files are saved to your own Google Drive. You are responsible for that Google account, for the submissions you receive, for informing participants how their uploads will be used, and for complying with Google's terms.</p>
+
+    <h2>5. No warranty</h2>
+    <p>DropBeam is provided "AS IS" and "AS AVAILABLE," without warranties of any kind, express or implied, including fitness for a particular purpose, reliability, availability, or that transfers will succeed or be error-free. Peer-to-peer connections can fail depending on networks and devices.</p>
+
+    <h2>6. Limitation of liability</h2>
+    <p>To the maximum extent permitted by law, the authors, contributors, and operators of DropBeam shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of data, files, profits, or goodwill, arising from your use of or inability to use DropBeam — including any misuse of the tool by you or any third party.</p>
+
+    <h2>7. Indemnity</h2>
+    <p>You agree to indemnify and hold harmless the authors, contributors, and operators of DropBeam from any claims, damages, or expenses arising out of your use of the service or your violation of these terms.</p>
+
+    <h2>8. Open-source licence</h2>
+    <p>DropBeam is open-source software and may be self-hosted and modified under the terms of its licence. These Terms of Use govern use of a given deployment and do not override the software licence.</p>
+
+    <h2>9. Changes and governing law</h2>
+    <p>These terms may be updated by the operator of a given deployment; continued use constitutes acceptance. Any disputes are governed by the laws applicable to the operator of the site you are using.</p>
+  </article>
 </div>
 
 <!-- ================================================================
@@ -740,7 +884,7 @@
 ================================================================ -->
 <div id="app-zone">
   <nav id="appbar" class="wrap hidden">
-    <a class="brand" href="./"><svg class="db-mark" viewBox="0 0 512 512" aria-hidden="true"><g class="db-logo"><line class="db-beam b1" x1="256" y1="256" x2="256" y2="115"/><line class="db-beam b2" x1="256" y1="256" x2="356" y2="156"/><line class="db-beam b3" x1="256" y1="256" x2="397" y2="256"/><line class="db-beam b4" x1="256" y1="256" x2="356" y2="356"/><line class="db-beam b5" x1="256" y1="256" x2="256" y2="397"/><line class="db-beam b6" x1="256" y1="256" x2="156" y2="356"/><line class="db-beam b7" x1="256" y1="256" x2="115" y2="256"/><line class="db-beam b8" x1="256" y1="256" x2="156" y2="156"/><circle class="db-center" cx="256" cy="256" r="15"/></g></svg>drop<span class="lite">beam</span></a>
+    <a class="brand" href="./"><svg class="db-mark" viewBox="0 0 512 512" aria-hidden="true"><g class="db-logo"><line class="db-beam b1" x1="256" y1="256" x2="256" y2="115"/><line class="db-beam b2" x1="256" y1="256" x2="356" y2="156"/><line class="db-beam b3" x1="256" y1="256" x2="397" y2="256"/><line class="db-beam b4" x1="256" y1="256" x2="356" y2="356"/><line class="db-beam b5" x1="256" y1="256" x2="256" y2="397"/><line class="db-beam b6" x1="256" y1="256" x2="156" y2="356"/><line class="db-beam b7" x1="256" y1="256" x2="115" y2="256"/><line class="db-beam b8" x1="256" y1="256" x2="156" y2="156"/><circle class="db-center" cx="256" cy="256" r="15"/></g></svg><span class="word">drop<span class="lite">beam</span></span></a>
   </nav>
 
   <!-- BEAM MODE -->
@@ -921,7 +1065,7 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
   "use strict";
 
   // ============ SITE OWNER CONFIG — see SETUP guide ============
-  const GOOGLE_CLIENT_ID = "779808637596-3eib8gegsm9k1h0iubd0aui2io97i4gi.apps.googleusercontent.com";
+  const GOOGLE_CLIENT_ID = "PASTE_YOUR_CLIENT_ID_HERE.apps.googleusercontent.com";
   // Optional: run your own PeerJS signaling server and set it here, e.g.
   // const SIGNALING = { host:'peer.yourdomain.com', port:443, secure:true, path:'/' };
   const SIGNALING = null;
@@ -1039,6 +1183,17 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
   const params = new URLSearchParams(location.search);
   const uploadCode = params.get('upload');
   const joinCode = params.get('join');
+  const page = params.get('page');
+
+  // legal pages
+  if (page === 'privacy' || page === 'terms') {
+    $('landing').classList.add('hidden');
+    $('app-zone').classList.add('hidden');
+    const splash = document.getElementById('splash'); if (splash) splash.classList.add('done');
+    $('legal-zone').classList.remove('hidden');
+    $('legal-' + page).classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
 
   const goBeam = () => { enterApp(); $('beam-root').classList.remove('hidden'); };
   const goCollect = () => { enterApp(); $('collect-root').classList.remove('hidden'); initCollect(); };
