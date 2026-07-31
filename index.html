@@ -92,6 +92,12 @@
   nav.bar { padding: 26px 0 18px; display: flex; align-items: center; justify-content: space-between; }
   nav.bar .navnote { font: 500 10.5px/1 var(--mono); letter-spacing: .24em; color: #6fbdb2;
     text-transform: uppercase; }
+  .gh-link { display: inline-flex; align-items: center; gap: 7px; color: var(--dim);
+    text-decoration: none; font: 500 13.5px/1 var(--sans); transition: color .15s; }
+  .gh-link:hover { color: #fff; }
+  .gh-link svg { display: block; }
+  .gh-foot { display: inline-flex; align-items: center; gap: 6px; }
+  .gh-foot svg { display: block; }
   #appbar { padding: 24px 0 10px; }
 
   /* ============ HERO ============ */
@@ -179,10 +185,10 @@
   .modecard .mc-top > span:last-child { padding-top: 1px; }
   .modecard .mc-ic {
     width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
+    display: flex; align-items: center; justify-content: center; line-height: 0;
     background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
   }
-  .modecard .mc-ic svg { width: 20px; height: 20px; display: block; }
+  .modecard .mc-ic svg { width: 20px; height: 20px; display: block; vertical-align: middle; }
   .modecard.beam .mc-ic { color: var(--teal); }
   .modecard.collect .mc-ic { color: #5eead4; }
   .modecard .mc-name { font: 600 16.5px/1.15 var(--display); letter-spacing: -.005em; }
@@ -473,6 +479,7 @@
     body { padding: 0 0 48px; }
     nav.bar { padding: 18px 0 14px; }
     nav.bar .navnote { display: none; }
+    .gh-link .gh-text { display: none; }
     .wrap { width: calc(100% - 32px); }
     .narrow { width: calc(100% - 28px); }
 
@@ -630,9 +637,10 @@
     <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 12V5M12 12l4.9-4.9M12 12h7M12 12l4.9 4.9M12 12v7M12 12l-4.9 4.9M12 12H5M12 12L7.1 7.1"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></symbol>
     <symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L8 8m4-4l4 4M5 20h14"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></symbol>
-    <symbol id="i-beam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h6m4 0h6M12 4v6m0 4v6"/><circle cx="12" cy="12" r="2.4"/></symbol>
-    <symbol id="i-collect" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 14v3a2 2 0 002 2h10a2 2 0 002-2v-3"/><path d="M12 5v9m0 0l-3.5-3.5M12 14l3.5-3.5"/></symbol>
+    <symbol id="i-beam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/><line x1="12" y1="4" x2="12" y2="7.2"/><line x1="12" y1="16.8" x2="12" y2="20"/><line x1="4" y1="12" x2="7.2" y2="12"/><line x1="16.8" y1="12" x2="20" y2="12"/><line x1="6.34" y1="6.34" x2="8.6" y2="8.6"/><line x1="15.4" y1="15.4" x2="17.66" y2="17.66"/><line x1="17.66" y1="6.34" x2="15.4" y2="8.6"/><line x1="8.6" y1="15.4" x2="6.34" y2="17.66"/></symbol>
+    <symbol id="i-collect" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4.5" x2="12" y2="13.5"/><polyline points="8.5,10 12,13.5 15.5,10"/><path d="M5 15v2.5A2.5 2.5 0 007.5 20h9A2.5 2.5 0 0019 17.5V15"/></symbol>
     <symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 6l6 6-6 6"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.36 9.36 0 015 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.79-4.58 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.26 10.26 0 0022 12.25C22 6.58 17.52 2 12 2z"/></symbol>
   </defs>
 </svg>
 
@@ -642,7 +650,10 @@
 <div id="landing">
   <nav class="bar wrap">
     <a class="brand" href="./"><svg class="db-mark" viewBox="0 0 512 512" aria-hidden="true"><g class="db-logo"><line class="db-beam b1" x1="256" y1="256" x2="256" y2="115"/><line class="db-beam b2" x1="256" y1="256" x2="356" y2="156"/><line class="db-beam b3" x1="256" y1="256" x2="397" y2="256"/><line class="db-beam b4" x1="256" y1="256" x2="356" y2="356"/><line class="db-beam b5" x1="256" y1="256" x2="256" y2="397"/><line class="db-beam b6" x1="256" y1="256" x2="156" y2="356"/><line class="db-beam b7" x1="256" y1="256" x2="115" y2="256"/><line class="db-beam b8" x1="256" y1="256" x2="156" y2="156"/><circle class="db-center" cx="256" cy="256" r="15"/></g></svg><span class="word">drop<span class="lite">beam</span></span></a>
-    <span class="navnote">Open source · Serverless</span>
+    <a class="gh-link" href="https://github.com/YOUR_USERNAME/dropbeam" target="_blank" rel="noopener" aria-label="View DropBeam on GitHub">
+      <svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-github"/></svg>
+      <span class="gh-text">GitHub</span>
+    </a>
   </nav>
 
   <!-- HERO -->
@@ -660,7 +671,6 @@
         <div class="modeboard">
           <div class="modecard beam" id="mode-beam" role="button" tabindex="0">
             <div class="mc-top">
-              <span class="mc-ic"><svg class="ic" width="19" height="19"><use href="#i-beam"/></svg></span>
               <span>
                 <div class="mc-name">Beam</div>
                 <div class="mc-for">Between your devices</div>
@@ -672,12 +682,11 @@
               <span class="step">Drop</span><span class="arr">→</span>
               <span class="step">Burns</span>
             </div>
-            <span class="mc-go">Start beaming <svg class="ic" width="15" height="15"><use href="#i-right"/></svg></span>
+            <span class="mc-go">Start beaming <svg class="ic" viewBox="0 0 24 24" width="15" height="15"><use href="#i-right"/></svg></span>
           </div>
 
           <div class="modecard collect" id="mode-collect" role="button" tabindex="0">
             <div class="mc-top">
-              <span class="mc-ic"><svg class="ic" width="19" height="19"><use href="#i-collect"/></svg></span>
               <span>
                 <div class="mc-name">Collect</div>
                 <div class="mc-for">Into your Google Drive</div>
@@ -689,7 +698,7 @@
               <span class="step">They upload</span><span class="arr">→</span>
               <span class="step">Drive</span>
             </div>
-            <span class="mc-go">Start collecting <svg class="ic" width="15" height="15"><use href="#i-right"/></svg></span>
+            <span class="mc-go">Start collecting <svg class="ic" viewBox="0 0 24 24" width="15" height="15"><use href="#i-right"/></svg></span>
           </div>
         </div>
 
@@ -720,7 +729,7 @@
       </div>
       <div>
         <div class="f-eyebrow">
-          <span class="f-badge"><svg class="ic" width="18" height="18"><use href="#i-beam"/></svg></span>
+          <span class="f-badge"><svg class="ic" viewBox="0 0 24 24" width="18" height="18"><use href="#i-beam"/></svg></span>
           <span class="f-num">Beam</span>
         </div>
         <h3>Your devices, one surface</h3>
@@ -747,12 +756,12 @@
             <div><b>34</b><span>files received</span></div>
             <div><b>12</b><span>participants</span></div>
           </div>
-          <span class="mt-btn">Open Drive folder <svg class="ic" width="14" height="14"><use href="#i-arrow"/></svg></span>
+          <span class="mt-btn">Open Drive folder <svg class="ic" viewBox="0 0 24 24" width="14" height="14"><use href="#i-arrow"/></svg></span>
         </div>
       </div>
       <div>
         <div class="f-eyebrow">
-          <span class="f-badge"><svg class="ic" width="18" height="18"><use href="#i-collect"/></svg></span>
+          <span class="f-badge"><svg class="ic" viewBox="0 0 24 24" width="18" height="18"><use href="#i-collect"/></svg></span>
           <span class="f-num">Collect</span>
         </div>
         <h3>Collect with confidence</h3>
@@ -782,7 +791,7 @@
       </div>
       <div>
         <div class="f-eyebrow">
-          <span class="f-badge"><svg class="ic" width="18" height="18"><use href="#i-spark"/></svg></span>
+          <span class="f-badge"><svg class="ic" viewBox="0 0 24 24" width="18" height="18"><use href="#i-spark"/></svg></span>
           <span class="f-num">Privacy</span>
         </div>
         <h3>Private by design</h3>
@@ -804,6 +813,10 @@
       <a href="?page=privacy">Privacy Policy</a>
       <span class="dot-sep">·</span>
       <a href="?page=terms">Terms of Use</a>
+      <span class="dot-sep">·</span>
+      <a href="https://github.com/YOUR_USERNAME/dropbeam" target="_blank" rel="noopener" class="gh-foot">
+        <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-github"/></svg> Contribute
+      </a>
     </div>
   </footer>
 </div>
@@ -950,7 +963,7 @@
       <section class="card">
         <h2>Beam</h2>
         <div id="drop" class="dropzone" tabindex="0" role="button" aria-label="Choose files to send">
-          <div class="drop-ico"><svg class="ic" width="18" height="18"><use href="#i-up"/></svg></div>
+          <div class="drop-ico"><svg class="ic" viewBox="0 0 24 24" width="18" height="18"><use href="#i-up"/></svg></div>
           <div class="drop-big">Drag &amp; drop files here</div>
           <div class="drop-hint">or tap to browse · or press Ctrl/Cmd+V to beam your clipboard</div>
         </div>
@@ -1042,7 +1055,7 @@
       </div>
       <div id="p-upload" class="hidden">
         <div id="p-drop" class="dropzone" tabindex="0" role="button" aria-label="Choose files to submit">
-          <div class="drop-ico"><svg class="ic" width="18" height="18"><use href="#i-up"/></svg></div>
+          <div class="drop-ico"><svg class="ic" viewBox="0 0 24 24" width="18" height="18"><use href="#i-up"/></svg></div>
           <div class="drop-big">Drag &amp; drop your files here</div>
           <div class="drop-hint">or tap to browse · photos upload in original quality</div>
         </div>
@@ -1083,7 +1096,7 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
   // Your Google Client ID is read from an optional config.js (git-ignored) if present,
   // otherwise falls back to the placeholder. See config.example.js.
   const CFG = (typeof window !== 'undefined' && window.DROPBEAM_CONFIG) || {};
-  const GOOGLE_CLIENT_ID = CFG.GOOGLE_CLIENT_ID || "PASTE_YOUR_CLIENT_ID_HERE.apps.googleusercontent.com";
+  const GOOGLE_CLIENT_ID = CFG.GOOGLE_CLIENT_ID || "779808637596-3eib8gegsm9k1h0iubd0aui2io97i4gi.apps.googleusercontent.com";
   // Optional: run your own PeerJS signaling server, e.g.
   // { host:'peer.yourdomain.com', port:443, secure:true, path:'/' }
   const SIGNALING = CFG.SIGNALING || null;
