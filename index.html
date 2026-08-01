@@ -166,10 +166,11 @@
 
   /* hero explainer — two modes at a glance */
   .modeboard {
-    margin-top: 48px; width: 100%; max-width: 720px;
+    margin-top: 48px; width: 100%; max-width: 940px;
     display: grid; gap: 16px; grid-template-columns: 1fr;
   }
-  @media (min-width: 620px) { .modeboard { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 720px) { .modeboard { grid-template-columns: 1fr 1fr 1fr; } }
+  @media (min-width: 500px) and (max-width: 719px) { .modeboard { grid-template-columns: 1fr 1fr; } }
   .modecard {
     display: block;
     text-align: left; border-radius: 18px; padding: 22px;
@@ -180,6 +181,7 @@
   .modecard:hover { transform: translateY(-3px); background: rgba(255,255,255,.06); }
   .modecard.beam:hover { border-color: rgba(139,92,246,.55); }
   .modecard.collect:hover { border-color: rgba(45,212,191,.55); }
+  .modecard.drops:hover { border-color: rgba(255,183,71,.55); }
   .modecard .mc-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
   .modecard .mc-top > span { display: block; }
   .modecard .mc-top > span:last-child { padding-top: 1px; }
@@ -207,6 +209,7 @@
   }
   .modecard.beam .mc-go { color: var(--teal); }
   .modecard.collect .mc-go { color: #6ee7d8; }
+  .modecard.drops .mc-go { color: var(--burn); }
   .modecard .mc-go svg { transition: transform .18s; }
   .modecard:hover .mc-go svg { transform: translateX(3px); }
 
@@ -318,6 +321,60 @@
   .chipcloud .pill { font-size: 13px; padding: 10px 17px; border-color: rgba(255,255,255,.14);
     color: #e6ebf0; background: rgba(255,255,255,.05); }
 
+  /* ============ interactive showcase ============ */
+  .showcase { max-width: 940px; margin: 0 auto; }
+  .show-tabs { display: inline-flex; gap: 4px; padding: 4px; border-radius: 12px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); margin: 0 auto 28px;
+    position: relative; left: 50%; transform: translateX(-50%); }
+  .show-tab { background: transparent; color: var(--dim); border: 0; border-radius: 9px;
+    padding: 10px 22px; font: 600 14px/1 var(--sans); cursor: pointer; transition: color .15s, background .15s; }
+  .show-tab:hover:not(.on) { color: var(--text); box-shadow: none; transform: none; }
+  .show-tab.on { background: rgba(255,255,255,.08); color: #fff; box-shadow: none; }
+  .show-panels { position: relative; }
+  .show-panel { display: none; gap: clamp(28px, 4vw, 60px); grid-template-columns: 1fr;
+    align-items: center; animation: showFade .4s ease; }
+  .show-panel.on { display: grid; }
+  @media (min-width: 820px) { .show-panel { grid-template-columns: 1.05fr 1fr; } }
+  @keyframes showFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .show-visual { background: #0a0b10; border: 1px solid rgba(255,255,255,.07); border-radius: 18px;
+    padding: clamp(26px, 3.5vw, 44px); min-height: 300px; display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden; }
+  .show-visual::before { content: ""; position: absolute; inset: 0;
+    background: radial-gradient(120% 120% at 25% 8%, var(--fx), transparent 55%); opacity: .18; pointer-events: none; }
+  .show-visual .mockcard { position: relative; z-index: 1; }
+  .show-copy h3 { font-family: var(--display); font-size: clamp(22px, 2.7vw, 28px); font-weight: 600;
+    letter-spacing: -.02em; margin-bottom: 14px; color: #fff; }
+  .show-copy p { color: #b8c2cc; font-size: 15.5px; line-height: 1.7; margin-bottom: 18px; }
+  .show-copy b { color: var(--text); font-weight: 600; }
+  /* drops mock */
+  .drops-mock-tag { font: 700 20px/1 var(--mono); color: var(--burn); margin-bottom: 12px; }
+  .drops-mock-tag::before { content: ""; }
+  .drops-mock-presence { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ok);
+    font-weight: 600; margin-bottom: 12px; }
+  .drops-mock-presence .pd { width: 8px; height: 8px; border-radius: 50%; background: var(--ok);
+    box-shadow: 0 0 0 0 rgba(99,230,164,.5); animation: ripple 2.2s ease-out infinite; }
+  .drops-mock-row { font-size: 12.5px; color: var(--dim); padding: 4px 0; }
+  .drops-mock-row b { color: var(--ok); font-weight: 600; }
+  .drops-mock-poll { margin-top: 12px; }
+  .drops-mock-poll .dmp-q { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .dmp-bar { position: relative; font: 500 11.5px/1 var(--mono); color: #cfd6dd; padding: 8px 10px;
+    border: 1px solid var(--line); border-radius: 7px; margin-bottom: 6px; overflow: hidden; }
+  .dmp-bar span { position: absolute; inset: 0 auto 0 0; background: rgba(255,183,71,.16); z-index: 0; }
+  .dmp-bar { z-index: 1; }
+  /* tools strip */
+  .tools-strip { max-width: 940px; margin: 28px auto 0; display: flex; align-items: center;
+    justify-content: space-between; gap: 24px; flex-wrap: wrap;
+    background: #0c0d12; border: 1px solid rgba(255,255,255,.08); border-radius: 18px;
+    padding: clamp(22px, 3vw, 34px); }
+  .tools-strip h3 { font-family: var(--display); font-size: 20px; font-weight: 600; letter-spacing: -.015em;
+    color: #fff; margin-bottom: 8px; }
+  .tools-strip p { color: var(--dim); font-size: 14.5px; line-height: 1.6; max-width: 60ch; }
+  .tools-strip-btn { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); color: #fff;
+    border-radius: 10px; padding: 12px 20px; font: 600 14px/1 var(--sans); text-decoration: none;
+    transition: background .15s, border-color .15s; }
+  .tools-strip-btn:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.24); }
+
   footer.land {
     text-align: center; color: var(--dim); font-size: 13px;
     padding: 84px 0 52px; line-height: 2;
@@ -352,6 +409,52 @@
   .legal code { font: 500 13.5px/1 var(--mono); background: var(--panel2); border: 1px solid var(--line);
     border-radius: 5px; padding: 2px 6px; color: var(--teal-dim); }
 
+  /* ============ TOOLS ============ */
+  .tools-wrap { max-width: 760px; padding-bottom: 90px; }
+  .tools-head { margin: 8px 0 28px; }
+  .tools-head h1 { font-family: var(--display); font-size: clamp(30px, 5vw, 40px); font-weight: 700;
+    letter-spacing: -.025em; color: #fff; margin-bottom: 8px; }
+  .tools-head p { color: var(--dim); font-size: 15.5px; line-height: 1.6; }
+  .tools-head b { color: var(--text); font-weight: 600; }
+  .tool { margin-bottom: 16px; }
+  .tool h2 { font: 600 16px/1.3 var(--display); letter-spacing: -.01em; color: #fff;
+    text-transform: none; margin-bottom: 4px; }
+  .tool-desc { color: var(--dim); font-size: 13.5px; line-height: 1.55; margin-bottom: 14px; }
+  .tool-drop { border: 1.5px dashed #29343f; border-radius: 12px; padding: 24px 16px; text-align: center;
+    cursor: pointer; transition: border-color .15s, background .15s; }
+  .tool-drop:hover { border-color: rgba(42,216,196,.45); }
+  .tool-drop.over { border-color: var(--teal); background: rgba(42,216,196,.05); }
+  .tool-drop .drop-big { font-size: 14.5px; font-weight: 600; }
+  .tool-drop .drop-hint { color: var(--dim); font-size: 12.5px; margin-top: 5px; }
+  .tool-list { list-style: none; margin-top: 12px; }
+  .tool-list li { display: flex; align-items: center; gap: 10px; background: var(--panel2);
+    border: 1px solid var(--line-soft); border-radius: 9px; padding: 9px 12px; margin-bottom: 6px;
+    font-size: 13.5px; }
+  .tool-list li .nm { flex: 1; overflow-wrap: anywhere; }
+  .tool-list li .sz { color: var(--dim); font-size: 12px; white-space: nowrap; }
+  .tool-list li .rm { color: var(--bad); cursor: pointer; font-size: 16px; line-height: 1; }
+  .tool-list li a { color: var(--teal); text-decoration: none; font-weight: 600; }
+  .tool-status { font-size: 13px; color: var(--dim); margin-top: 10px; min-height: 18px; }
+  .tool-status.bad { color: var(--bad); } .tool-status.ok { color: var(--ok); }
+  .tool-note { font-size: 12px; color: var(--dim); margin-top: 8px; }
+  .diff-inputs { display: grid; gap: 12px; grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .diff-inputs { grid-template-columns: 1fr 1fr; } }
+  .diff-inputs textarea { min-height: 120px; font: 400 13px/1.6 var(--mono); resize: vertical; }
+  .diff-out { margin-top: 16px; font: 400 13px/1.7 var(--mono); border-radius: 10px; overflow: hidden;
+    border: 1px solid var(--line); display: none; }
+  .diff-out.show { display: block; }
+  .diff-out .dl { padding: 2px 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .diff-out .add { background: rgba(99,230,164,.12); color: #b6f5d5; }
+  .diff-out .del { background: rgba(255,123,123,.12); color: #ffc4c4; }
+  .diff-out .same { color: var(--dim); }
+  .diff-out .add::before { content: "+ "; opacity: .6; }
+  .diff-out .del::before { content: "− "; opacity: .6; }
+  .diff-out .same::before { content: "  "; }
+  /* Tools link in header/footer */
+  .tools-link { color: var(--dim); text-decoration: none; font: 500 13.5px/1 var(--sans); transition: color .15s; }
+  .tools-link:hover { color: var(--teal); }
+  .nav-right { display: inline-flex; align-items: center; gap: 18px; }
+
   .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.in { opacity: 1; transform: none; }
 
@@ -382,6 +485,63 @@
   .qrbox img, .qrbox canvas { border-radius: 12px; padding: 9px; background: #fff;
     box-shadow: 0 10px 30px rgba(0,0,0,.4); }
   .center { text-align: center; color: var(--dim); font-size: 13.5px; line-height: 1.7; }
+
+  /* connection-type badge */
+  .conn-badge { display: inline-flex; align-items: center; gap: 7px; font: 500 12px/1 var(--sans);
+    border-radius: 999px; padding: 6px 12px; border: 1px solid var(--line); background: var(--panel2); }
+  .conn-badge .cb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--dim); }
+  .conn-badge.ok { border-color: rgba(99,230,164,.4); color: #b6f5d5; }
+  .conn-badge.ok .cb-dot { background: var(--ok); box-shadow: 0 0 6px rgba(99,230,164,.5); }
+  .conn-badge.dim { color: var(--dim); }
+  .conn-line { margin-top: 10px; min-height: 20px; }
+
+  /* presence gate */
+  .geo-toggle { display: flex; gap: 11px; align-items: flex-start; margin: 16px 0 4px;
+    padding: 13px 14px; border: 1px solid var(--line); border-radius: 11px; background: var(--panel2);
+    cursor: pointer; font-size: 13.5px; line-height: 1.5; color: var(--dim); }
+  .geo-toggle input { margin-top: 2px; width: 16px; height: 16px; flex-shrink: 0; accent-color: var(--teal); }
+  .geo-toggle b { color: var(--text); font-weight: 600; }
+  .geo-note { font-size: 12.5px; color: var(--dim); line-height: 1.55; margin-top: 10px; }
+  .geo-note.ok { color: var(--ok); } .geo-note.bad { color: var(--bad); }
+
+  /* Drops */
+  .tag-input { position: relative; display: flex; align-items: center; width: 100%; }
+  .tag-input .tag-hash { position: absolute; left: 14px; font: 600 16px/1 var(--mono);
+    color: var(--burn); pointer-events: none; }
+  .tag-input input { padding-left: 30px; font-family: var(--mono); letter-spacing: .02em; }
+  .d-divider { display: flex; align-items: center; gap: 12px; margin: 22px 0 6px; color: #5d6a77;
+    font: 500 11px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; }
+  .d-divider::before, .d-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .d-tagname { font: 600 26px/1.3 var(--mono); color: var(--burn); text-align: center;
+    padding: 6px 0 2px; user-select: all; overflow-wrap: anywhere; }
+  .d-tagname::before { content: "#"; opacity: .6; }
+  .presence { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--text);
+    margin-bottom: 12px; }
+  .presence .pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--ok);
+    box-shadow: 0 0 0 0 rgba(99,230,164,.55); animation: ripple 2.2s ease-out infinite; }
+  .presence #d-count { font-weight: 700; color: var(--ok); }
+  @keyframes ripple { 0%{box-shadow:0 0 0 0 rgba(99,230,164,.5)} 70%,100%{box-shadow:0 0 0 8px rgba(99,230,164,0)} }
+  .activity { margin-top: 10px; display: flex; flex-direction: column; gap: 3px; }
+  .activity .ev { font-size: 12px; color: var(--dim); opacity: 0; transform: translateY(-4px);
+    animation: evIn .35s ease forwards; }
+  .activity .ev b { color: var(--text); font-weight: 600; }
+  .activity .ev.join b { color: var(--ok); } .activity .ev.leave b { color: var(--burn); }
+  @keyframes evIn { to { opacity: 1; transform: none; } }
+  /* poll */
+  #d-poll-question { font-size: 15.5px; font-weight: 600; margin-bottom: 12px; }
+  .poll-opt { position: relative; display: flex; align-items: center; justify-content: space-between;
+    border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; margin-bottom: 8px;
+    cursor: pointer; overflow: hidden; transition: border-color .15s; font-size: 14px; }
+  .poll-opt:hover { border-color: rgba(42,216,196,.4); }
+  .poll-opt .fill { position: absolute; inset: 0 auto 0 0; width: 0; background: rgba(42,216,196,.12);
+    transition: width .4s ease; z-index: 0; }
+  .poll-opt .lbl, .poll-opt .cnt { position: relative; z-index: 1; }
+  .poll-opt .cnt { font: 600 13px/1 var(--mono); color: var(--teal); }
+  .poll-opt.voted { border-color: var(--teal); }
+  .poll-opt.disabled { cursor: default; }
+  .tag-preview { font: 500 12px/1.4 var(--mono); color: var(--dim); min-height: 16px; margin: 6px 2px 0; }
+  .tag-preview b { color: var(--burn); }
+
   .status-line { min-height: 20px; font-size: 13px; color: var(--dim); margin-top: 10px; }
   .status-line.bad { color: var(--bad); }
   .status-line.ok { color: var(--ok); }
@@ -498,10 +658,11 @@
     .modecard .mc-go { display: inline-flex !important; }
     .hero .fine { margin-top: 26px; font-size: 10.5px; }
 
-    section.block { padding: 64px 0 6px; }
-    .sect-head { margin-bottom: 40px; }
-    .feature { padding: 24px 20px; gap: 26px; border-radius: 16px; }
-    .feature .mockwrap { min-height: 0; padding: 24px 20px; order: -1; }
+    section.block { padding: 56px 0 6px; }
+    .sect-head { margin-bottom: 32px; }
+    .sect-head h2 { font-size: clamp(26px, 8vw, 34px); }
+    .sect-head p { font-size: 15px; }
+    .show-panel { gap: 22px; }
     .mockcard { max-width: 100%; }
     footer.land { padding: 60px 0 40px; }
 
@@ -524,7 +685,38 @@
     .legal h1 { font-size: 27px; }
     .legal h2 { font-size: 17px; margin-top: 26px; }
     .legal p, .legal ul li { font-size: 15px; }
+    .d-tagname { font-size: 22px; }
+    .poll-opt { padding: 12px 14px; }
+    .presence { font-size: 13px; }
+    .tools-wrap { padding-bottom: 64px; }
+    .tools-head h1 { font-size: 27px; }
+    .tool h2 { font-size: 15.5px; }
+    .diff-inputs textarea { min-height: 100px; }
+    .nav-right { gap: 14px; }
+    .show-tabs { width: 100%; left: 0; transform: none; }
+    .show-tab { flex: 1; padding: 10px 8px; font-size: 13px; }
+    .show-visual { min-height: 0; padding: 24px; }
+    .show-copy h3 { font-size: 21px; }
+    .show-copy p { font-size: 15px; }
+    .tools-strip { flex-direction: column; align-items: flex-start; }
+    .tools-strip-btn { width: 100%; justify-content: center; }
     #legal-zone nav.bar { padding: 16px 0 12px; }
+
+    /* segmented controls wrap instead of squishing text */
+    .seg { flex-wrap: wrap; }
+    .seg button { flex: 1 1 auto; min-width: 44%; font-size: 12px; padding: 10px 6px; }
+    #d-choose .seg button { min-width: 100%; }
+    /* drops + poll inputs stack cleanly */
+    .tag-input { width: 100%; }
+    #d-entry .row { flex-wrap: wrap; }
+    #d-entry .row .tag-input { flex: 1 1 100%; }
+    #d-entry .row button { flex: 1 1 100%; }
+    .diff-inputs { grid-template-columns: 1fr; }
+    /* file/tool rows never overflow */
+    .tool-list li { flex-wrap: wrap; }
+    .tool-list li .sz { margin-left: auto; }
+    .pills { gap: 7px; }
+    .pill { font-size: 12px; padding: 7px 12px; }
 
     /* splash scales down */
     #splash-mark { width: 92px; height: 92px; }
@@ -541,16 +733,22 @@
     .card { padding: 15px; }
     #code-show { font-size: 21px; letter-spacing: .14em; }
     .brand { font-size: 18px; }
+    .show-tab { font-size: 12px; padding: 9px 4px; }
+    .show-copy h3 { font-size: 19px; }
+    .tools-head h1 { font-size: 24px; }
+    .d-tagname { font-size: 20px; }
+    .tools-strip h3 { font-size: 18px; }
   }
 
   /* comfortable tap targets on touch devices */
   @media (hover: none) and (pointer: coarse) {
-    button, ul.items li a, ul.items li button { min-height: 44px; }
-    .foot-links a, .legal-back { min-height: 40px; display: inline-flex; align-items: center; }
+    button, ul.items li a, ul.items li button, .show-tab, .tools-strip-btn { min-height: 44px; }
+    .foot-links a, .legal-back, .tools-link { min-height: 40px; display: inline-flex; align-items: center; }
     .seg button { min-height: 42px; }
     /* cards and dropzones must NOT become flex — keep their stacked layout,
        just give them comfortable padding for touch */
     .modecard { padding: 20px; }
+    .tool-drop { padding: 26px 16px; }
   }
 
   /* ============ animated beam-mark (splash + spinner) ============ */
@@ -650,10 +848,13 @@
 <div id="landing">
   <nav class="bar wrap">
     <a class="brand" href="./"><svg class="db-mark" viewBox="0 0 512 512" aria-hidden="true"><g class="db-logo"><line class="db-beam b1" x1="256" y1="256" x2="256" y2="115"/><line class="db-beam b2" x1="256" y1="256" x2="356" y2="156"/><line class="db-beam b3" x1="256" y1="256" x2="397" y2="256"/><line class="db-beam b4" x1="256" y1="256" x2="356" y2="356"/><line class="db-beam b5" x1="256" y1="256" x2="256" y2="397"/><line class="db-beam b6" x1="256" y1="256" x2="156" y2="356"/><line class="db-beam b7" x1="256" y1="256" x2="115" y2="256"/><line class="db-beam b8" x1="256" y1="256" x2="156" y2="156"/><circle class="db-center" cx="256" cy="256" r="15"/></g></svg><span class="word">drop<span class="lite">beam</span></span></a>
-    <a class="gh-link" href="https://github.com/shubhambanik696/dropbeam" target="_blank" rel="noopener" aria-label="View DropBeam on GitHub">
-      <svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-github"/></svg>
-      <span class="gh-text">GitHub</span>
-    </a>
+    <span class="nav-right">
+      <a class="tools-link" href="?page=tools">Tools</a>
+      <a class="gh-link" href="https://github.com/YOUR_USERNAME/dropbeam" target="_blank" rel="noopener" aria-label="View DropBeam on GitHub">
+        <svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-github"/></svg>
+        <span class="gh-text">GitHub</span>
+      </a>
+    </span>
   </nav>
 
   <!-- HERO -->
@@ -700,6 +901,22 @@
             </div>
             <span class="mc-go">Start collecting <svg class="ic" viewBox="0 0 24 24" width="15" height="15"><use href="#i-right"/></svg></span>
           </div>
+
+          <div class="modecard drops" id="mode-drops" role="button" tabindex="0">
+            <div class="mc-top">
+              <span>
+                <div class="mc-name">Drops</div>
+                <div class="mc-for">Say a word · everyone's in</div>
+              </span>
+            </div>
+            <p class="mc-desc">Open a Drop with a word like <b>#afterparty</b>. Anyone who knows the word joins live — no account, nothing saved.</p>
+            <div class="mc-flow">
+              <span class="step">Say a word</span><span class="arr">→</span>
+              <span class="step">They join</span><span class="arr">→</span>
+              <span class="step">Vanishes</span>
+            </div>
+            <span class="mc-go">Open a Drop <svg class="ic" viewBox="0 0 24 24" width="15" height="15"><use href="#i-right"/></svg></span>
+          </div>
         </div>
 
         <p class="fine">No accounts · No installs · <b>No traces</b></p>
@@ -710,98 +927,97 @@
   <!-- BEAM. COLLECT. BURN. -->
   <section class="block wrap">
     <div class="sect-head reveal">
-      <span class="eyebrow">Two modes, one file</span>
-      <h2>Beam. Collect. Burn.</h2>
-      <p>One page, zero servers — your data never sleeps in someone else's cloud.</p>
+      <span class="eyebrow">Three ways to share</span>
+      <h2>One page. Zero servers.</h2>
+      <p>Your data goes device-to-device and vanishes when you're done. Nothing sleeps in someone else's cloud.</p>
     </div>
 
-    <!-- Feature 1 -->
-    <div class="feature reveal" style="--fx:rgba(139,92,246,.55); --fx-solid:#8b5cf6; --mock:rgba(139,92,246,.22)">
-      <div class="mockwrap">
-        <div class="mockcard">
-          <div class="padmock-label"><i></i>Live pad · synced as you type</div>
-          <div class="padmock">meeting moved to 4:30<br>wifi: BlueHouse_5G / pass 7741<br>https://maps.app/xK2… <span class="caret"></span><br><span class="who">— edited on Phone · Falcon</span></div>
-          <div class="mt-stats">
-            <div><b>0 ms</b><span>server storage</span></div>
-            <div><b>E2E</b><span>encrypted</span></div>
+    <div class="showcase reveal">
+      <div class="show-tabs" role="tablist">
+        <button class="show-tab on" data-show="beam" role="tab">Beam</button>
+        <button class="show-tab" data-show="collect" role="tab">Collect</button>
+        <button class="show-tab" data-show="drops" role="tab">Drops</button>
+      </div>
+
+      <div class="show-panels">
+        <!-- BEAM -->
+        <div class="show-panel on" data-panel="beam" style="--fx:#8b5cf6">
+          <div class="show-visual">
+            <div class="mockcard">
+              <div class="padmock-label"><i></i>Live pad · synced as you type</div>
+              <div class="padmock">meeting moved to 4:30<br>wifi: BlueHouse_5G / pass 7741<br>https://maps.app/xK2… <span class="caret"></span><br><span class="who">— edited on Phone · Falcon</span></div>
+              <div class="mt-stats">
+                <div><b>0 ms</b><span>server storage</span></div>
+                <div><b>E2E</b><span>encrypted</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="show-copy">
+            <h3>Beam — your devices, one surface</h3>
+            <p>Move files, text, and a live-synced clipboard straight between your own laptop, phone, and tablet. Full quality, end-to-end encrypted, and every item burns after you save it.</p>
+            <div class="pills">
+              <span class="pill">Live pad</span><span class="pill">Full-quality files</span><span class="pill">Burn after save</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLLECT -->
+        <div class="show-panel" data-panel="collect" style="--fx:#2dd4bf">
+          <div class="show-visual">
+            <div class="mockcard">
+              <span class="live">COLLECTING</span>
+              <div class="mt-title">Monsoon Photo Contest</div>
+              <div class="mt-sub">Folder created in your Drive · PIN protected</div>
+              <div class="mt-stats">
+                <div><b>34</b><span>files received</span></div>
+                <div><b>12</b><span>participants</span></div>
+              </div>
+              <span class="mt-btn">Open Drive folder <svg class="ic" viewBox="0 0 24 24" width="14" height="14"><use href="#i-arrow"/></svg></span>
+            </div>
+          </div>
+          <div class="show-copy">
+            <h3>Collect — into your own Drive</h3>
+            <p>Show one QR and anyone uploads straight into your Google Drive — no app, no account on their end. Each file is named after who sent it, with PIN and per-person limits to keep spam out.</p>
+            <div class="pills">
+              <span class="pill">Events</span><span class="pill">Weddings</span><span class="pill">Classrooms</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DROPS -->
+        <div class="show-panel" data-panel="drops" style="--fx:#ffb347">
+          <div class="show-visual">
+            <div class="mockcard">
+              <div class="drops-mock-tag">#afterparty</div>
+              <div class="drops-mock-presence"><span class="pd"></span> 6 here now</div>
+              <div class="drops-mock-row">Alice <b>joined</b></div>
+              <div class="drops-mock-row">Sam dropped a photo</div>
+              <div class="drops-mock-poll">
+                <div class="dmp-q">Where to eat?</div>
+                <div class="dmp-bar"><span style="width:62%"></span>Tacos · 62%</div>
+                <div class="dmp-bar"><span style="width:38%"></span>Sushi · 38%</div>
+              </div>
+            </div>
+          </div>
+          <div class="show-copy">
+            <h3>Drops — say a word, everyone's in</h3>
+            <p>Open a live room with a word like <b>#afterparty</b>. Anyone who knows it joins instantly — share files, a live pad, and quick polls, then it all vanishes when you leave. No accounts, nothing saved.</p>
+            <div class="pills">
+              <span class="pill">Word to join</span><span class="pill">Live presence</span><span class="pill">Group polls</span>
+            </div>
           </div>
         </div>
       </div>
-      <div>
-        <div class="f-eyebrow">
-          <span class="f-badge"><svg class="ic" viewBox="0 0 24 24" width="18" height="18"><use href="#i-beam"/></svg></span>
-          <span class="f-num">Beam</span>
-        </div>
-        <h3>Your devices, one surface</h3>
-        <ul class="points">
-          <li>A <b>live pad</b> that syncs keystroke-by-keystroke across laptop, phone, and tablet</li>
-          <li>Beam files at <b>full quality</b> — multi-GB videos stream straight to disk, never through a cloud</li>
-          <li>Every received item <b>burns after you save it</b>, or on a countdown you choose</li>
-          <li>Every device is approved by you, with matching <b>code words</b> on both screens</li>
-        </ul>
-        <div class="pills">
-          <span class="pill">Laptop</span><span class="pill">Phone</span><span class="pill">Any browser</span>
-        </div>
-      </div>
     </div>
 
-    <!-- Feature 2 -->
-    <div class="feature flip reveal" style="--fx:rgba(45,212,191,.55); --fx-solid:#2dd4bf; --mock:rgba(45,212,191,.2)">
-      <div class="mockwrap">
-        <div class="mockcard">
-          <span class="live">COLLECTING</span>
-          <div class="mt-title">Monsoon Photography Contest</div>
-          <div class="mt-sub">Folder created in your Drive · PIN protected</div>
-          <div class="mt-stats">
-            <div><b>34</b><span>files received</span></div>
-            <div><b>12</b><span>participants</span></div>
-          </div>
-          <span class="mt-btn">Open Drive folder <svg class="ic" viewBox="0 0 24 24" width="14" height="14"><use href="#i-arrow"/></svg></span>
-        </div>
-      </div>
+    <!-- Tools strip -->
+    <div class="tools-strip reveal">
       <div>
-        <div class="f-eyebrow">
-          <span class="f-badge"><svg class="ic" viewBox="0 0 24 24" width="18" height="18"><use href="#i-collect"/></svg></span>
-          <span class="f-num">Collect</span>
-        </div>
-        <h3>Collect with confidence</h3>
-        <ul class="points">
-          <li>Show one QR — participants upload in seconds, with <b>no app and no Google account</b></li>
-          <li>Files land in <b>your own Google Drive</b>, each named after who sent it</li>
-          <li>Sign-in stays in your browser tab; DropBeam has no server and never sees your credentials</li>
-          <li><b>PIN rate-limiting</b> and per-person quotas keep strangers and spam out</li>
-        </ul>
-        <div class="pills">
-          <span class="pill">Events</span><span class="pill">Weddings</span><span class="pill">Classrooms</span>
-        </div>
+        <span class="eyebrow" style="display:block;margin-bottom:10px">Also included</span>
+        <h3>Local file tools — nothing uploaded</h3>
+        <p>Merge PDFs, bundle a ZIP, compress images, strip hidden metadata, and compare text — all in your browser, no file ever leaves your device.</p>
       </div>
-    </div>
-
-    <!-- Feature 3 -->
-    <div class="feature reveal" style="--fx:rgba(236,72,153,.5); --fx-solid:#ec4899; --mock:rgba(236,72,153,.16)">
-      <div class="mockwrap">
-        <div class="chipcloud">
-          <span class="pill">One HTML file</span>
-          <span class="pill">No server</span>
-          <span class="pill">E2E encrypted</span>
-          <span class="pill">Burn after save</span>
-          <span class="pill">QR pairing</span>
-          <span class="pill">Open source</span>
-        </div>
-      </div>
-      <div>
-        <div class="f-eyebrow">
-          <span class="f-badge"><svg class="ic" viewBox="0 0 24 24" width="18" height="18"><use href="#i-spark"/></svg></span>
-          <span class="f-num">Privacy</span>
-        </div>
-        <h3>Private by design</h3>
-        <ul class="points">
-          <li>The entire product is a <b>single HTML file</b> — audit every line in one sitting</li>
-          <li>Transfers use WebRTC's mandatory encryption; a relay can help connect but <b>can never read</b></li>
-          <li>Nothing is written to any database, ever — closing the tab is a <b>full wipe</b></li>
-          <li>No accounts, no analytics, no tracking pixels, no ads. Ever.</li>
-        </ul>
-      </div>
+      <a href="?page=tools" class="tools-strip-btn">Open Tools <svg class="ic" viewBox="0 0 24 24" width="15" height="15"><use href="#i-right"/></svg></a>
     </div>
   </section>
 
@@ -814,7 +1030,9 @@
       <span class="dot-sep">·</span>
       <a href="?page=terms">Terms of Use</a>
       <span class="dot-sep">·</span>
-      <a href="https://github.com/shubhambanik696/dropbeam" target="_blank" rel="noopener" class="gh-foot">
+      <a href="?page=tools">Tools</a>
+      <span class="dot-sep">·</span>
+      <a href="https://github.com/YOUR_USERNAME/dropbeam" target="_blank" rel="noopener" class="gh-foot">
         <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-github"/></svg> Contribute
       </a>
     </div>
@@ -906,6 +1124,119 @@
 </div>
 
 <!-- ================================================================
+     TOOLS — local file utilities, nothing leaves the browser
+================================================================ -->
+<div id="tools-zone" class="hidden">
+  <nav class="bar wrap">
+    <a class="brand" href="./"><svg class="db-mark" viewBox="0 0 512 512" aria-hidden="true"><g class="db-logo"><line class="db-beam b1" x1="256" y1="256" x2="256" y2="115"/><line class="db-beam b2" x1="256" y1="256" x2="356" y2="156"/><line class="db-beam b3" x1="256" y1="256" x2="397" y2="256"/><line class="db-beam b4" x1="256" y1="256" x2="356" y2="356"/><line class="db-beam b5" x1="256" y1="256" x2="256" y2="397"/><line class="db-beam b6" x1="256" y1="256" x2="156" y2="356"/><line class="db-beam b7" x1="256" y1="256" x2="115" y2="256"/><line class="db-beam b8" x1="256" y1="256" x2="156" y2="156"/><circle class="db-center" cx="256" cy="256" r="15"/></g></svg><span class="word">drop<span class="lite">beam</span></span></a>
+    <a class="legal-back" href="./">← Back</a>
+  </nav>
+  <div class="wrap tools-wrap">
+    <div class="tools-head">
+      <h1>Tools</h1>
+      <p>File utilities that run entirely in your browser. <b>Nothing is uploaded</b> — your files never leave this device.</p>
+    </div>
+
+    <!-- PDF -->
+    <section class="tool card">
+      <h2>Merge &amp; split PDFs</h2>
+      <p class="tool-desc">Combine several PDFs into one, or pull out a page range — locally.</p>
+      <div class="tool-drop" id="pdf-drop" tabindex="0" role="button">
+        <div class="drop-big">Drop PDF files here</div>
+        <div class="drop-hint">or tap to browse</div>
+      </div>
+      <input id="pdf-files" type="file" accept="application/pdf" multiple hidden>
+      <ul class="tool-list" id="pdf-list"></ul>
+      <div id="pdf-actions" class="hidden">
+        <div class="row mt">
+          <button id="pdf-merge" style="flex:1">Merge into one PDF</button>
+        </div>
+        <div class="row mt">
+          <input id="pdf-range" type="text" placeholder="Pages to extract, e.g. 1-3,5" aria-label="Page range">
+          <button id="pdf-split" class="quiet" style="flex:0 0 auto">Extract</button>
+        </div>
+        <p class="tool-note" id="pdf-note">Split works on the first file in the list.</p>
+      </div>
+      <div class="tool-status" id="pdf-status"></div>
+    </section>
+
+    <!-- ZIP -->
+    <section class="tool card">
+      <h2>Bundle into a ZIP</h2>
+      <p class="tool-desc">Drop any files and download them as a single ZIP.</p>
+      <div class="tool-drop" id="zip-drop" tabindex="0" role="button">
+        <div class="drop-big">Drop files here</div>
+        <div class="drop-hint">or tap to browse — any file type</div>
+      </div>
+      <input id="zip-files" type="file" multiple hidden>
+      <ul class="tool-list" id="zip-list"></ul>
+      <div class="row mt hidden" id="zip-actions">
+        <input id="zip-name" type="text" placeholder="bundle" aria-label="Zip name">
+        <button id="zip-make" style="flex:0 0 auto">Make ZIP</button>
+      </div>
+      <div class="tool-status" id="zip-status"></div>
+    </section>
+
+    <!-- IMAGE -->
+    <section class="tool card">
+      <h2>Compress &amp; convert images</h2>
+      <p class="tool-desc">Shrink, resize, or convert images (PNG · JPG · WebP) — right here.</p>
+      <div class="tool-drop" id="img-drop" tabindex="0" role="button">
+        <div class="drop-big">Drop images here</div>
+        <div class="drop-hint">or tap to browse</div>
+      </div>
+      <input id="img-files" type="file" accept="image/*" multiple hidden>
+      <div id="img-controls" class="hidden">
+        <div class="field-label">Max width (px) — blank keeps original</div>
+        <input id="img-width" type="text" placeholder="e.g. 1600" aria-label="Max width">
+        <div class="field-label">Quality (JPG/WebP)</div>
+        <input id="img-quality" type="range" min="30" max="95" value="80" style="width:100%">
+        <div class="field-label">Output format</div>
+        <div class="seg" id="img-format">
+          <button class="on" data-fmt="image/jpeg">JPG</button>
+          <button data-fmt="image/webp">WebP</button>
+          <button data-fmt="image/png">PNG</button>
+        </div>
+        <button id="img-go" class="mt" style="width:100%">Convert &amp; download</button>
+      </div>
+      <ul class="tool-list" id="img-list"></ul>
+      <div class="tool-status" id="img-status"></div>
+    </section>
+
+    <!-- METADATA STRIP -->
+    <section class="tool card">
+      <h2>Remove image metadata</h2>
+      <p class="tool-desc">Strip hidden EXIF data (location, device, timestamps) before you share. The image is re-encoded clean.</p>
+      <div class="tool-drop" id="meta-drop" tabindex="0" role="button">
+        <div class="drop-big">Drop images here</div>
+        <div class="drop-hint">or tap to browse</div>
+      </div>
+      <input id="meta-files" type="file" accept="image/*" multiple hidden>
+      <ul class="tool-list" id="meta-list"></ul>
+      <div class="tool-status" id="meta-status"></div>
+    </section>
+
+    <!-- DIFF -->
+    <section class="tool card">
+      <h2>Compare text</h2>
+      <p class="tool-desc">Paste two versions and see what changed — line by line, all local.</p>
+      <div class="diff-inputs">
+        <div>
+          <div class="field-label">Original</div>
+          <textarea id="diff-a" placeholder="Paste the first version…"></textarea>
+        </div>
+        <div>
+          <div class="field-label">Changed</div>
+          <textarea id="diff-b" placeholder="Paste the second version…"></textarea>
+        </div>
+      </div>
+      <button id="diff-go" class="mt" style="width:100%">Compare</button>
+      <div class="diff-out" id="diff-out"></div>
+    </section>
+  </div>
+</div>
+
+<!-- ================================================================
      APP ZONE
 ================================================================ -->
 <div id="app-zone">
@@ -947,6 +1278,7 @@
       <section class="card">
         <h2>In this room <span id="host-badge" class="hidden" style="color:var(--teal)">· you're the hub</span></h2>
         <div id="roster"></div>
+        <div id="conn-badge-beam" class="conn-line"></div>
         <p class="note" id="hub-note"></p>
       </section>
 
@@ -988,6 +1320,144 @@
     </div>
   </div>
 
+  <!-- DROPS MODE -->
+  <div id="drops-root" class="narrow hidden">
+    <section class="card hidden" id="d-approvals-card">
+      <h2>Someone's joining this Drop</h2>
+      <div id="d-approvals"></div>
+      <p class="note">Let them in only if they read out the <b>same code words</b> shown on their screen.</p>
+    </section>
+
+    <section id="d-entry" class="card">
+      <h2>Drops — say a word, everyone's in</h2>
+      <div id="d-choose">
+        <div class="field-label">Open a Drop (you host it)</div>
+        <div class="row">
+          <div class="tag-input"><span class="tag-hash">#</span><input id="d-open-tag" type="text" maxlength="32" placeholder="afterparty" autocomplete="off" aria-label="Drop word"></div>
+        </div>
+        <div id="d-open-preview" class="tag-preview"></div>
+        <div class="field-label">Who can join?</div>
+        <div class="seg" role="radiogroup" aria-label="Drop access">
+          <button class="on" data-acc="open">Open · anyone with the word</button>
+          <button data-acc="locked">Locked · word + secret</button>
+        </div>
+        <div id="d-secret-wrap" class="hidden">
+          <div class="field-label">Secret (share only with your group)</div>
+          <input id="d-open-secret" type="text" maxlength="24" placeholder="a short passphrase" autocomplete="off">
+        </div>
+
+        <label class="geo-toggle">
+          <input type="checkbox" id="d-geo">
+          <span><b>Require people to be here</b><br>People must share their location and be near you to join.</span>
+        </label>
+        <div id="d-geo-opts" class="hidden">
+          <div class="field-label">How close is "here"?</div>
+          <div class="seg" id="d-geo-radius" role="radiogroup" aria-label="Allowed distance"></div>
+          <div id="d-geo-status" class="geo-note"></div>
+        </div>
+
+        <button id="d-open-btn" class="mt" style="width:100%">Open the Drop</button>
+
+        <div class="d-divider"><span>or join one</span></div>
+
+        <div class="field-label">Join a Drop</div>
+        <div class="row">
+          <div class="tag-input"><span class="tag-hash">#</span><input id="d-join-tag" type="text" maxlength="32" placeholder="afterparty" autocomplete="off" aria-label="Drop word to join"></div>
+          <button id="d-join-btn" class="quiet" style="flex:0 0 auto">Join</button>
+        </div>
+        <div id="d-join-secret-wrap" class="hidden">
+          <div class="field-label">Secret</div>
+          <input id="d-join-secret" type="text" maxlength="24" placeholder="ask the host" autocomplete="off">
+        </div>
+      </div>
+
+      <div id="d-host-wait" class="hidden">
+        <div class="d-tagname" id="d-tagname"></div>
+        <div id="d-qr" class="qrbox"></div>
+        <p class="center" id="d-share-line"></p>
+        <div class="row mt">
+          <button id="d-copy" class="quiet small">Copy Drop link</button>
+          <button id="d-end" class="danger small" style="flex:0 0 auto">End Drop</button>
+        </div>
+        <p class="note" id="d-host-note">Keep this tab open — you're hosting this Drop. Everyone connects through you, and it vanishes when you leave.</p>
+      </div>
+
+      <div id="d-join-wait" class="hidden">
+        <p class="center">Knocking on <span id="d-join-name" style="color:var(--teal)"></span>…<br>Your verification code words:</p>
+        <div class="verify-big" id="d-my-verify"></div>
+        <p class="center">The host's screen must show the same before they let you in.</p>
+      </div>
+
+      <div id="d-msg" class="status-line" aria-live="polite"></div>
+    </section>
+
+    <div id="d-app" class="hidden">
+      <section class="card">
+        <h2>In this Drop <span id="d-tag-badge" style="color:var(--burn)"></span> <span id="d-host-badge" class="hidden" style="color:var(--teal)">· you're the host</span></h2>
+        <div class="presence" id="d-presence">
+          <span class="pulse"></span>
+          <span id="d-count">1</span>&nbsp;<span id="d-count-label">here now</span>
+        </div>
+        <div id="d-roster"></div>
+        <div id="conn-badge-drops" class="conn-line"></div>
+        <div id="d-activity" class="activity" aria-live="polite"></div>
+        <p class="note" id="d-app-note"></p>
+      </section>
+
+      <section class="card">
+        <h2>Live pad — synced as you type</h2>
+        <textarea id="d-pad" placeholder="Type here — everyone in the Drop sees it live."></textarea>
+        <div class="row mt">
+          <button id="d-pad-copy" class="quiet small">Copy pad</button>
+          <button id="d-pad-clear" class="quiet small">Clear pad</button>
+        </div>
+        <div id="d-pad-status"></div>
+      </section>
+
+      <section class="card">
+        <h2>Quick poll <span class="note" style="display:inline;margin:0">· ask the Drop</span></h2>
+        <div id="d-poll-setup">
+          <input id="d-poll-q" type="text" maxlength="80" placeholder="e.g. Where should we eat?" aria-label="Poll question">
+          <div class="row mt">
+            <input id="d-poll-a" type="text" maxlength="30" placeholder="Option A">
+            <input id="d-poll-b" type="text" maxlength="30" placeholder="Option B">
+          </div>
+          <div class="row mt">
+            <input id="d-poll-c" type="text" maxlength="30" placeholder="Option C (optional)">
+            <input id="d-poll-d" type="text" maxlength="30" placeholder="Option D (optional)">
+          </div>
+          <button id="d-poll-start" class="mt" style="width:100%">Start poll</button>
+        </div>
+        <div id="d-poll-live" class="hidden">
+          <div id="d-poll-question"></div>
+          <div id="d-poll-options"></div>
+          <button id="d-poll-end" class="quiet small mt">End poll</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Drop something in</h2>
+        <div id="d-drop" class="dropzone" tabindex="0" role="button" aria-label="Choose files to drop">
+          <div class="drop-ico"><svg class="ic" viewBox="0 0 24 24" width="18" height="18"><use href="#i-up"/></svg></div>
+          <div class="drop-big">Drag &amp; drop files here</div>
+          <div class="drop-hint">or tap to browse — everyone in the Drop can grab it</div>
+        </div>
+        <input id="d-file" type="file" multiple>
+        <div class="row mt">
+          <input id="d-text-in" type="text" placeholder="Or drop a quick message…" aria-label="Message to drop">
+          <button id="d-text-send" style="flex:0 0 auto">Drop text</button>
+        </div>
+        <div class="field-label">When something arrives, it should:</div>
+        <div class="seg" id="d-seg" role="radiogroup" aria-label="Expiry policy">
+          <button class="on" data-exp="burn">Burn after save</button>
+          <button data-exp="300">Last 5 min</button>
+          <button data-exp="3600">Last 1 hour</button>
+        </div>
+        <ul class="items" id="d-list"></ul>
+      </section>
+    </div>
+  </div>
+
   <!-- COLLECT MODE (organizer) -->
   <div id="collect-root" class="narrow hidden">
     <section class="card" id="c-step1">
@@ -1003,6 +1473,17 @@
       <input id="ev-name" type="text" placeholder="Monsoon Photography Contest 2026" maxlength="80">
       <div class="field-label">Event PIN — optional, stops strangers with the link</div>
       <input id="ev-pin" type="text" placeholder="e.g. 2468 (leave empty for open access)" maxlength="12">
+
+      <label class="geo-toggle">
+        <input type="checkbox" id="ev-geo">
+        <span><b>Require people to be here</b><br>Participants must share their location and be near you to upload.</span>
+      </label>
+      <div id="ev-geo-opts" class="hidden">
+        <div class="field-label">How close is "here"?</div>
+        <div class="seg" id="ev-geo-radius" role="radiogroup" aria-label="Allowed distance"></div>
+        <div id="ev-geo-status" class="geo-note"></div>
+      </div>
+
       <button id="ev-start" class="mt" style="width:100%">Create folder &amp; start collecting</button>
       <div id="ev-status" class="status-line"></div>
     </section>
@@ -1051,6 +1532,9 @@
           <div class="field-label">Event PIN</div>
           <input id="p-pin" type="text" maxlength="12" placeholder="Ask the organizer">
         </div>
+        <div id="p-geo-wrap" class="hidden">
+          <div class="geo-note" id="p-geo-note">This event only accepts uploads from people at the venue. You'll be asked to share your location to confirm you're here.</div>
+        </div>
         <button id="p-enter" class="mt" style="width:100%">Continue</button>
       </div>
       <div id="p-upload" class="hidden">
@@ -1082,6 +1566,7 @@
 <!-- Optional local config (git-ignored). Sets window.DROPBEAM_CONFIG. Safe if absent. -->
 <script src="config.js" onerror="void 0"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<!-- Tools libraries (pdf-lib, JSZip) load on demand — see loadToolLib() -->
 <!-- QR generator embedded inline (qrcodejs, MIT) — no CDN dependency, always available -->
 <script>
 var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this.parsedData=[];for(var b=[],d=0,e=this.data.length;e>d;d++){var f=this.data.charCodeAt(d);f>65536?(b[0]=240|(1835008&f)>>>18,b[1]=128|(258048&f)>>>12,b[2]=128|(4032&f)>>>6,b[3]=128|63&f):f>2048?(b[0]=224|(61440&f)>>>12,b[1]=128|(4032&f)>>>6,b[2]=128|63&f):f>128?(b[0]=192|(1984&f)>>>6,b[1]=128|63&f):b[0]=f,this.parsedData=this.parsedData.concat(b)}this.parsedData.length!=this.data.length&&(this.parsedData.unshift(191),this.parsedData.unshift(187),this.parsedData.unshift(239))}function b(a,b){this.typeNumber=a,this.errorCorrectLevel=b,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}function i(a,b){if(void 0==a.length)throw new Error(a.length+"/"+b);for(var c=0;c<a.length&&0==a[c];)c++;this.num=new Array(a.length-c+b);for(var d=0;d<a.length-c;d++)this.num[d]=a[d+c]}function j(a,b){this.totalCount=a,this.dataCount=b}function k(){this.buffer=[],this.length=0}function m(){return"undefined"!=typeof CanvasRenderingContext2D}function n(){var a=!1,b=navigator.userAgent;return/android/i.test(b)&&(a=!0,aMat=b.toString().match(/android ([0-9]\.[0-9])/i),aMat&&aMat[1]&&(a=parseFloat(aMat[1]))),a}function r(a,b){for(var c=1,e=s(a),f=0,g=l.length;g>=f;f++){var h=0;switch(b){case d.L:h=l[f][0];break;case d.M:h=l[f][1];break;case d.Q:h=l[f][2];break;case d.H:h=l[f][3]}if(h>=e)break;c++}if(c>l.length)throw new Error("Too long data");return c}function s(a){var b=encodeURI(a).toString().replace(/\%[0-9a-fA-F]{2}/g,"a");return b.length+(b.length!=a?3:0)}a.prototype={getLength:function(){return this.parsedData.length},write:function(a){for(var b=0,c=this.parsedData.length;c>b;b++)a.put(this.parsedData[b],8)}},b.prototype={addData:function(b){var c=new a(b);this.dataList.push(c),this.dataCache=null},isDark:function(a,b){if(0>a||this.moduleCount<=a||0>b||this.moduleCount<=b)throw new Error(a+","+b);return this.modules[a][b]},getModuleCount:function(){return this.moduleCount},make:function(){this.makeImpl(!1,this.getBestMaskPattern())},makeImpl:function(a,c){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var d=0;d<this.moduleCount;d++){this.modules[d]=new Array(this.moduleCount);for(var e=0;e<this.moduleCount;e++)this.modules[d][e]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupPositionAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(a,c),this.typeNumber>=7&&this.setupTypeNumber(a),null==this.dataCache&&(this.dataCache=b.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,c)},setupPositionProbePattern:function(a,b){for(var c=-1;7>=c;c++)if(!(-1>=a+c||this.moduleCount<=a+c))for(var d=-1;7>=d;d++)-1>=b+d||this.moduleCount<=b+d||(this.modules[a+c][b+d]=c>=0&&6>=c&&(0==d||6==d)||d>=0&&6>=d&&(0==c||6==c)||c>=2&&4>=c&&d>=2&&4>=d?!0:!1)},getBestMaskPattern:function(){for(var a=0,b=0,c=0;8>c;c++){this.makeImpl(!0,c);var d=f.getLostPoint(this);(0==c||a>d)&&(a=d,b=c)}return b},createMovieClip:function(a,b,c){var d=a.createEmptyMovieClip(b,c),e=1;this.make();for(var f=0;f<this.modules.length;f++)for(var g=f*e,h=0;h<this.modules[f].length;h++){var i=h*e,j=this.modules[f][h];j&&(d.beginFill(0,100),d.moveTo(i,g),d.lineTo(i+e,g),d.lineTo(i+e,g+e),d.lineTo(i,g+e),d.endFill())}return d},setupTimingPattern:function(){for(var a=8;a<this.moduleCount-8;a++)null==this.modules[a][6]&&(this.modules[a][6]=0==a%2);for(var b=8;b<this.moduleCount-8;b++)null==this.modules[6][b]&&(this.modules[6][b]=0==b%2)},setupPositionAdjustPattern:function(){for(var a=f.getPatternPosition(this.typeNumber),b=0;b<a.length;b++)for(var c=0;c<a.length;c++){var d=a[b],e=a[c];if(null==this.modules[d][e])for(var g=-2;2>=g;g++)for(var h=-2;2>=h;h++)this.modules[d+g][e+h]=-2==g||2==g||-2==h||2==h||0==g&&0==h?!0:!1}},setupTypeNumber:function(a){for(var b=f.getBCHTypeNumber(this.typeNumber),c=0;18>c;c++){var d=!a&&1==(1&b>>c);this.modules[Math.floor(c/3)][c%3+this.moduleCount-8-3]=d}for(var c=0;18>c;c++){var d=!a&&1==(1&b>>c);this.modules[c%3+this.moduleCount-8-3][Math.floor(c/3)]=d}},setupTypeInfo:function(a,b){for(var c=this.errorCorrectLevel<<3|b,d=f.getBCHTypeInfo(c),e=0;15>e;e++){var g=!a&&1==(1&d>>e);6>e?this.modules[e][8]=g:8>e?this.modules[e+1][8]=g:this.modules[this.moduleCount-15+e][8]=g}for(var e=0;15>e;e++){var g=!a&&1==(1&d>>e);8>e?this.modules[8][this.moduleCount-e-1]=g:9>e?this.modules[8][15-e-1+1]=g:this.modules[8][15-e-1]=g}this.modules[this.moduleCount-8][8]=!a},mapData:function(a,b){for(var c=-1,d=this.moduleCount-1,e=7,g=0,h=this.moduleCount-1;h>0;h-=2)for(6==h&&h--;;){for(var i=0;2>i;i++)if(null==this.modules[d][h-i]){var j=!1;g<a.length&&(j=1==(1&a[g]>>>e));var k=f.getMask(b,d,h-i);k&&(j=!j),this.modules[d][h-i]=j,e--,-1==e&&(g++,e=7)}if(d+=c,0>d||this.moduleCount<=d){d-=c,c=-c;break}}}},b.PAD0=236,b.PAD1=17,b.createData=function(a,c,d){for(var e=j.getRSBlocks(a,c),g=new k,h=0;h<d.length;h++){var i=d[h];g.put(i.mode,4),g.put(i.getLength(),f.getLengthInBits(i.mode,a)),i.write(g)}for(var l=0,h=0;h<e.length;h++)l+=e[h].dataCount;if(g.getLengthInBits()>8*l)throw new Error("code length overflow. ("+g.getLengthInBits()+">"+8*l+")");for(g.getLengthInBits()+4<=8*l&&g.put(0,4);0!=g.getLengthInBits()%8;)g.putBit(!1);for(;;){if(g.getLengthInBits()>=8*l)break;if(g.put(b.PAD0,8),g.getLengthInBits()>=8*l)break;g.put(b.PAD1,8)}return b.createBytes(g,e)},b.createBytes=function(a,b){for(var c=0,d=0,e=0,g=new Array(b.length),h=new Array(b.length),j=0;j<b.length;j++){var k=b[j].dataCount,l=b[j].totalCount-k;d=Math.max(d,k),e=Math.max(e,l),g[j]=new Array(k);for(var m=0;m<g[j].length;m++)g[j][m]=255&a.buffer[m+c];c+=k;var n=f.getErrorCorrectPolynomial(l),o=new i(g[j],n.getLength()-1),p=o.mod(n);h[j]=new Array(n.getLength()-1);for(var m=0;m<h[j].length;m++){var q=m+p.getLength()-h[j].length;h[j][m]=q>=0?p.get(q):0}}for(var r=0,m=0;m<b.length;m++)r+=b[m].totalCount;for(var s=new Array(r),t=0,m=0;d>m;m++)for(var j=0;j<b.length;j++)m<g[j].length&&(s[t++]=g[j][m]);for(var m=0;e>m;m++)for(var j=0;j<b.length;j++)m<h[j].length&&(s[t++]=h[j][m]);return s};for(var c={MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8},d={L:1,M:0,Q:3,H:2},e={PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7},f={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],G15:1335,G18:7973,G15_MASK:21522,getBCHTypeInfo:function(a){for(var b=a<<10;f.getBCHDigit(b)-f.getBCHDigit(f.G15)>=0;)b^=f.G15<<f.getBCHDigit(b)-f.getBCHDigit(f.G15);return(a<<10|b)^f.G15_MASK},getBCHTypeNumber:function(a){for(var b=a<<12;f.getBCHDigit(b)-f.getBCHDigit(f.G18)>=0;)b^=f.G18<<f.getBCHDigit(b)-f.getBCHDigit(f.G18);return a<<12|b},getBCHDigit:function(a){for(var b=0;0!=a;)b++,a>>>=1;return b},getPatternPosition:function(a){return f.PATTERN_POSITION_TABLE[a-1]},getMask:function(a,b,c){switch(a){case e.PATTERN000:return 0==(b+c)%2;case e.PATTERN001:return 0==b%2;case e.PATTERN010:return 0==c%3;case e.PATTERN011:return 0==(b+c)%3;case e.PATTERN100:return 0==(Math.floor(b/2)+Math.floor(c/3))%2;case e.PATTERN101:return 0==b*c%2+b*c%3;case e.PATTERN110:return 0==(b*c%2+b*c%3)%2;case e.PATTERN111:return 0==(b*c%3+(b+c)%2)%2;default:throw new Error("bad maskPattern:"+a)}},getErrorCorrectPolynomial:function(a){for(var b=new i([1],0),c=0;a>c;c++)b=b.multiply(new i([1,g.gexp(c)],0));return b},getLengthInBits:function(a,b){if(b>=1&&10>b)switch(a){case c.MODE_NUMBER:return 10;case c.MODE_ALPHA_NUM:return 9;case c.MODE_8BIT_BYTE:return 8;case c.MODE_KANJI:return 8;default:throw new Error("mode:"+a)}else if(27>b)switch(a){case c.MODE_NUMBER:return 12;case c.MODE_ALPHA_NUM:return 11;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 10;default:throw new Error("mode:"+a)}else{if(!(41>b))throw new Error("type:"+b);switch(a){case c.MODE_NUMBER:return 14;case c.MODE_ALPHA_NUM:return 13;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 12;default:throw new Error("mode:"+a)}}},getLostPoint:function(a){for(var b=a.getModuleCount(),c=0,d=0;b>d;d++)for(var e=0;b>e;e++){for(var f=0,g=a.isDark(d,e),h=-1;1>=h;h++)if(!(0>d+h||d+h>=b))for(var i=-1;1>=i;i++)0>e+i||e+i>=b||(0!=h||0!=i)&&g==a.isDark(d+h,e+i)&&f++;f>5&&(c+=3+f-5)}for(var d=0;b-1>d;d++)for(var e=0;b-1>e;e++){var j=0;a.isDark(d,e)&&j++,a.isDark(d+1,e)&&j++,a.isDark(d,e+1)&&j++,a.isDark(d+1,e+1)&&j++,(0==j||4==j)&&(c+=3)}for(var d=0;b>d;d++)for(var e=0;b-6>e;e++)a.isDark(d,e)&&!a.isDark(d,e+1)&&a.isDark(d,e+2)&&a.isDark(d,e+3)&&a.isDark(d,e+4)&&!a.isDark(d,e+5)&&a.isDark(d,e+6)&&(c+=40);for(var e=0;b>e;e++)for(var d=0;b-6>d;d++)a.isDark(d,e)&&!a.isDark(d+1,e)&&a.isDark(d+2,e)&&a.isDark(d+3,e)&&a.isDark(d+4,e)&&!a.isDark(d+5,e)&&a.isDark(d+6,e)&&(c+=40);for(var k=0,e=0;b>e;e++)for(var d=0;b>d;d++)a.isDark(d,e)&&k++;var l=Math.abs(100*k/b/b-50)/5;return c+=10*l}},g={glog:function(a){if(1>a)throw new Error("glog("+a+")");return g.LOG_TABLE[a]},gexp:function(a){for(;0>a;)a+=255;for(;a>=256;)a-=255;return g.EXP_TABLE[a]},EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)},h=0;8>h;h++)g.EXP_TABLE[h]=1<<h;for(var h=8;256>h;h++)g.EXP_TABLE[h]=g.EXP_TABLE[h-4]^g.EXP_TABLE[h-5]^g.EXP_TABLE[h-6]^g.EXP_TABLE[h-8];for(var h=0;255>h;h++)g.LOG_TABLE[g.EXP_TABLE[h]]=h;i.prototype={get:function(a){return this.num[a]},getLength:function(){return this.num.length},multiply:function(a){for(var b=new Array(this.getLength()+a.getLength()-1),c=0;c<this.getLength();c++)for(var d=0;d<a.getLength();d++)b[c+d]^=g.gexp(g.glog(this.get(c))+g.glog(a.get(d)));return new i(b,0)},mod:function(a){if(this.getLength()-a.getLength()<0)return this;for(var b=g.glog(this.get(0))-g.glog(a.get(0)),c=new Array(this.getLength()),d=0;d<this.getLength();d++)c[d]=this.get(d);for(var d=0;d<a.getLength();d++)c[d]^=g.gexp(g.glog(a.get(d))+b);return new i(c,0).mod(a)}},j.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],j.getRSBlocks=function(a,b){var c=j.getRsBlockTable(a,b);if(void 0==c)throw new Error("bad rs block @ typeNumber:"+a+"/errorCorrectLevel:"+b);for(var d=c.length/3,e=[],f=0;d>f;f++)for(var g=c[3*f+0],h=c[3*f+1],i=c[3*f+2],k=0;g>k;k++)e.push(new j(h,i));return e},j.getRsBlockTable=function(a,b){switch(b){case d.L:return j.RS_BLOCK_TABLE[4*(a-1)+0];case d.M:return j.RS_BLOCK_TABLE[4*(a-1)+1];case d.Q:return j.RS_BLOCK_TABLE[4*(a-1)+2];case d.H:return j.RS_BLOCK_TABLE[4*(a-1)+3];default:return void 0}},k.prototype={get:function(a){var b=Math.floor(a/8);return 1==(1&this.buffer[b]>>>7-a%8)},put:function(a,b){for(var c=0;b>c;c++)this.putBit(1==(1&a>>>b-c-1))},getLengthInBits:function(){return this.length},putBit:function(a){var b=Math.floor(this.length/8);this.buffer.length<=b&&this.buffer.push(0),a&&(this.buffer[b]|=128>>>this.length%8),this.length++}};var l=[[17,14,11,7],[32,26,20,14],[53,42,32,24],[78,62,46,34],[106,84,60,44],[134,106,74,58],[154,122,86,64],[192,152,108,84],[230,180,130,98],[271,213,151,119],[321,251,177,137],[367,287,203,155],[425,331,241,177],[458,362,258,194],[520,412,292,220],[586,450,322,250],[644,504,364,280],[718,560,394,310],[792,624,442,338],[858,666,482,382],[929,711,509,403],[1003,779,565,439],[1091,857,611,461],[1171,911,661,511],[1273,997,715,535],[1367,1059,751,593],[1465,1125,805,625],[1528,1190,868,658],[1628,1264,908,698],[1732,1370,982,742],[1840,1452,1030,790],[1952,1538,1112,842],[2068,1628,1168,898],[2188,1722,1228,958],[2303,1809,1283,983],[2431,1911,1351,1051],[2563,1989,1423,1093],[2699,2099,1499,1139],[2809,2213,1579,1219],[2953,2331,1663,1273]],o=function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){function g(a,b){var c=document.createElementNS("http://www.w3.org/2000/svg",a);for(var d in b)b.hasOwnProperty(d)&&c.setAttribute(d,b[d]);return c}var b=this._htOption,c=this._el,d=a.getModuleCount();Math.floor(b.width/d),Math.floor(b.height/d),this.clear();var h=g("svg",{viewBox:"0 0 "+String(d)+" "+String(d),width:"100%",height:"100%",fill:b.colorLight});h.setAttributeNS("http://www.w3.org/2000/xmlns/","xmlns:xlink","http://www.w3.org/1999/xlink"),c.appendChild(h),h.appendChild(g("rect",{fill:b.colorDark,width:"1",height:"1",id:"template"}));for(var i=0;d>i;i++)for(var j=0;d>j;j++)if(a.isDark(i,j)){var k=g("use",{x:String(i),y:String(j)});k.setAttributeNS("http://www.w3.org/1999/xlink","href","#template"),h.appendChild(k)}},a.prototype.clear=function(){for(;this._el.hasChildNodes();)this._el.removeChild(this._el.lastChild)},a}(),p="svg"===document.documentElement.tagName.toLowerCase(),q=p?o:m()?function(){function a(){this._elImage.src=this._elCanvas.toDataURL("image/png"),this._elImage.style.display="block",this._elCanvas.style.display="none"}function d(a,b){var c=this;if(c._fFail=b,c._fSuccess=a,null===c._bSupportDataURI){var d=document.createElement("img"),e=function(){c._bSupportDataURI=!1,c._fFail&&_fFail.call(c)},f=function(){c._bSupportDataURI=!0,c._fSuccess&&c._fSuccess.call(c)};return d.onabort=e,d.onerror=e,d.onload=f,d.src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",void 0}c._bSupportDataURI===!0&&c._fSuccess?c._fSuccess.call(c):c._bSupportDataURI===!1&&c._fFail&&c._fFail.call(c)}if(this._android&&this._android<=2.1){var b=1/window.devicePixelRatio,c=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(a,d,e,f,g,h,i,j){if("nodeName"in a&&/img/i.test(a.nodeName))for(var l=arguments.length-1;l>=1;l--)arguments[l]=arguments[l]*b;else"undefined"==typeof j&&(arguments[1]*=b,arguments[2]*=b,arguments[3]*=b,arguments[4]*=b);c.apply(this,arguments)}}var e=function(a,b){this._bIsPainted=!1,this._android=n(),this._htOption=b,this._elCanvas=document.createElement("canvas"),this._elCanvas.width=b.width,this._elCanvas.height=b.height,a.appendChild(this._elCanvas),this._el=a,this._oContext=this._elCanvas.getContext("2d"),this._bIsPainted=!1,this._elImage=document.createElement("img"),this._elImage.style.display="none",this._el.appendChild(this._elImage),this._bSupportDataURI=null};return e.prototype.draw=function(a){var b=this._elImage,c=this._oContext,d=this._htOption,e=a.getModuleCount(),f=d.width/e,g=d.height/e,h=Math.round(f),i=Math.round(g);b.style.display="none",this.clear();for(var j=0;e>j;j++)for(var k=0;e>k;k++){var l=a.isDark(j,k),m=k*f,n=j*g;c.strokeStyle=l?d.colorDark:d.colorLight,c.lineWidth=1,c.fillStyle=l?d.colorDark:d.colorLight,c.fillRect(m,n,f,g),c.strokeRect(Math.floor(m)+.5,Math.floor(n)+.5,h,i),c.strokeRect(Math.ceil(m)-.5,Math.ceil(n)-.5,h,i)}this._bIsPainted=!0},e.prototype.makeImage=function(){this._bIsPainted&&d.call(this,a)},e.prototype.isPainted=function(){return this._bIsPainted},e.prototype.clear=function(){this._oContext.clearRect(0,0,this._elCanvas.width,this._elCanvas.height),this._bIsPainted=!1},e.prototype.round=function(a){return a?Math.floor(1e3*a)/1e3:a},e}():function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){for(var b=this._htOption,c=this._el,d=a.getModuleCount(),e=Math.floor(b.width/d),f=Math.floor(b.height/d),g=['<table style="border:0;border-collapse:collapse;">'],h=0;d>h;h++){g.push("<tr>");for(var i=0;d>i;i++)g.push('<td style="border:0;border-collapse:collapse;padding:0;margin:0;width:'+e+"px;height:"+f+"px;background-color:"+(a.isDark(h,i)?b.colorDark:b.colorLight)+';"></td>');g.push("</tr>")}g.push("</table>"),c.innerHTML=g.join("");var j=c.childNodes[0],k=(b.width-j.offsetWidth)/2,l=(b.height-j.offsetHeight)/2;k>0&&l>0&&(j.style.margin=l+"px "+k+"px")},a.prototype.clear=function(){this._el.innerHTML=""},a}();QRCode=function(a,b){if(this._htOption={width:256,height:256,typeNumber:4,colorDark:"#000000",colorLight:"#ffffff",correctLevel:d.H},"string"==typeof b&&(b={text:b}),b)for(var c in b)this._htOption[c]=b[c];"string"==typeof a&&(a=document.getElementById(a)),this._android=n(),this._el=a,this._oQRCode=null,this._oDrawing=new q(this._el,this._htOption),this._htOption.text&&this.makeCode(this._htOption.text)},QRCode.prototype.makeCode=function(a){this._oQRCode=new b(r(a,this._htOption.correctLevel),this._htOption.correctLevel),this._oQRCode.addData(a),this._oQRCode.make(),this._el.title=a,this._oDrawing.draw(this._oQRCode),this.makeImage()},QRCode.prototype.makeImage=function(){"function"==typeof this._oDrawing.makeImage&&(!this._android||this._android>=3)&&this._oDrawing.makeImage()},QRCode.prototype.clear=function(){this._oDrawing.clear()},QRCode.CorrectLevel=d}();
@@ -1157,6 +1642,15 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
   }, { threshold: .12 }) : null;
   document.querySelectorAll('.reveal').forEach(el => io ? io.observe(el) : el.classList.add('in'));
 
+  // interactive showcase tabs
+  document.querySelectorAll('.show-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const key = tab.dataset.show;
+      document.querySelectorAll('.show-tab').forEach(t => t.classList.toggle('on', t===tab));
+      document.querySelectorAll('.show-panel').forEach(p => p.classList.toggle('on', p.dataset.panel===key));
+    });
+  });
+
   // reusable beam-mark spinner markup
   const SPINNER_SVG =
     '<svg class="db-spinner" viewBox="0 0 512 512" aria-hidden="true"><g class="db-logo">' +
@@ -1172,6 +1666,93 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
   const loaderHTML = (text) => '<div class="connecting">' + SPINNER_SVG +
     (text ? '<div class="ctext">' + text + '</div>' : '') + '</div>';
   const showLoader = (el, text) => { if (el) el.innerHTML = loaderHTML(text); };
+
+  // Drops: normalize a word into a safe, consistent tag (lowercase, alnum + dashes)
+  function normalizeTag(raw){
+    return String(raw || '')
+      .toLowerCase()
+      .replace(/^#+/, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 32);
+  }
+  // deterministic room id from a tag (+optional secret) — same word maps to same room
+  async function tagRoomId(tag, secret){
+    const base = 'db-drop-' + tag + (secret ? '::' + secret : '');
+    if (crypto.subtle){
+      try {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(base));
+        const hex = [...new Uint8Array(buf)].slice(0,10).map(b=>b.toString(16).padStart(2,'0')).join('');
+        return 'dropbeam-drop-' + hex;
+      } catch {}
+    }
+    // fallback: simple hash
+    let h = 5381; for (let i=0;i<base.length;i++) h = ((h<<5)+h + base.charCodeAt(i)) >>> 0;
+    return 'dropbeam-drop-' + h.toString(16);
+  }
+
+  // ---- presence gate (GPS proximity) ----
+  // Radii the host can pick from (metres). Kept forgiving because GPS drifts indoors.
+  const GEO_RADII = [
+    { m: 100,  label: '100 m · same room/hall' },
+    { m: 500,  label: '500 m · at the venue' },
+    { m: 1000, label: '1 km · nearby' },
+    { m: 3000, label: '3 km · this area' }
+  ];
+  function getPosition(){
+    return new Promise((res, rej) => {
+      if (!navigator.geolocation) return rej(new Error('no-geo'));
+      navigator.geolocation.getCurrentPosition(
+        p => res({ lat: p.coords.latitude, lng: p.coords.longitude, acc: p.coords.accuracy }),
+        e => rej(e),
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
+      );
+    });
+  }
+  // haversine distance in metres
+  function geoDist(a, b){
+    const R = 6371000, toR = d => d*Math.PI/180;
+    const dLat = toR(b.lat-a.lat), dLng = toR(b.lng-a.lng);
+    const s = Math.sin(dLat/2)**2 + Math.cos(toR(a.lat))*Math.cos(toR(b.lat))*Math.sin(dLng/2)**2;
+    return 2*R*Math.asin(Math.sqrt(s));
+  }
+
+  // ---- connection-type detection (local / direct / relayed) ----
+  // Reads the active ICE candidate pair to honestly report how a peer link is routed.
+  async function detectConnType(dataConn){
+    try {
+      const pc = dataConn && dataConn.peerConnection;
+      if (!pc || !pc.getStats) return null;
+      const stats = await pc.getStats();
+      let pair=null, local=null, remote=null;
+      stats.forEach(r => {
+        if (r.type==='candidate-pair' && (r.selected || r.state==='succeeded' || r.nominated)){
+          if (!pair || r.selected) pair = r;
+        }
+      });
+      if (!pair) return null;
+      stats.forEach(r => { if (r.id===pair.localCandidateId) local=r; if (r.id===pair.remoteCandidateId) remote=r; });
+      const lt = local && local.candidateType, rt = remote && remote.candidateType;
+      // relayed if either side uses a TURN relay
+      if (lt==='relay' || rt==='relay') return 'relayed';
+      // local network if both are host candidates (and not over a VPN-ish mapped addr)
+      if (lt==='host' && rt==='host') return 'local';
+      // otherwise a direct P2P connection across networks (srflx/prflx)
+      return 'direct';
+    } catch { return null; }
+  }
+  // small helper to show a connection badge into a target element
+  function showConnBadge(el, type){
+    if (!el || !type) return;
+    const map = {
+      local:   ['on your network', 'This link stayed on your local network — nothing went to the internet.', 'ok'],
+      direct:  ['direct peer-to-peer', 'Connected directly between devices, end-to-end encrypted.', 'ok'],
+      relayed: ['relayed', 'Your network blocked a direct link, so traffic is relayed (still encrypted end-to-end).', 'dim']
+    };
+    const m = map[type]; if (!m) return;
+    el.innerHTML = '<span class="conn-badge ' + m[2] + '" title="'+m[1]+'"><span class="cb-dot"></span>' + m[0] + '</span>';
+    el.querySelector('.conn-badge').setAttribute('aria-label', m[1]);
+  }
 
   // robust QR: render into a target, show a spinner first, fall back to a copyable link
   function renderQR(targetId, text, size, fallbackLabel){
@@ -1214,6 +1795,7 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
   const params = new URLSearchParams(location.search);
   const uploadCode = params.get('upload');
   const joinCode = params.get('join');
+  const dropTag = params.get('drop');
   const page = params.get('page');
 
   // legal pages
@@ -1225,13 +1807,25 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
     $('legal-' + page).classList.remove('hidden');
     window.scrollTo(0, 0);
   }
+  // tools page
+  if (page === 'tools') {
+    $('landing').classList.add('hidden');
+    $('app-zone').classList.add('hidden');
+    const splash = document.getElementById('splash'); if (splash) splash.classList.add('done');
+    $('tools-zone').classList.remove('hidden');
+    window.scrollTo(0, 0);
+    if (typeof initTools === 'function') initTools();
+  }
 
   const goBeam = () => { enterApp(); $('beam-root').classList.remove('hidden'); };
   const goCollect = () => { enterApp(); $('collect-root').classList.remove('hidden'); initCollect(); };
+  const goDrops = () => { enterApp(); $('drops-root').classList.remove('hidden'); };
   $('mode-beam').onclick = goBeam;
   $('mode-collect').onclick = goCollect;
+  $('mode-drops').onclick = goDrops;
   $('mode-beam').addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); goBeam(); } });
   $('mode-collect').addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); goCollect(); } });
+  $('mode-drops').addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); goDrops(); } });
 
   if (uploadCode) {
     enterApp();
@@ -1242,6 +1836,13 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
     $('beam-root').classList.remove('hidden');
     $('code-in').value = joinCode.toUpperCase().slice(0, 8);
     setTimeout(() => $('btn-join').onclick(), 400);
+  } else if (dropTag) {
+    enterApp();
+    $('drops-root').classList.remove('hidden');
+    $('d-join-tag').value = normalizeTag(dropTag);
+    // if the link carried a locked hint, reveal the secret field
+    if (params.get('lock') === '1') $('d-join-secret-wrap').classList.remove('hidden');
+    setTimeout(() => { if (typeof dropsJoin === 'function') dropsJoin(); }, 400);
   }
 
   // ================================================================
@@ -1287,10 +1888,18 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
         c.send(JSON.stringify({t:'approved'}));
         broadcast(JSON.stringify({t:'roster', list:roster}));
         renderRoster();
+        checkConn(c);
         if (!$('app').classList.contains('hidden')) return;
         $('pair').classList.add('hidden'); $('app').classList.remove('hidden'); renderRoster();
       };
       no.onclick = () => { div.remove(); maybeHideApprovals(); c.close(); };
+    }
+    // detect how this link is routed, once ICE settles, and show an honest badge
+    function checkConn(c){
+      setTimeout(async () => {
+        const type = await detectConnType(c);
+        if (type) showConnBadge($('conn-badge-beam'), type);
+      }, 2500);
     }
     function maybeHideApprovals(){
       if (!$('approvals').children.length) $('approvals-card').classList.add('hidden');
@@ -1362,6 +1971,7 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
           if (m.t==='approved'){
             c._app = true; conns.push(c);
             $('pair').classList.add('hidden'); $('app').classList.remove('hidden'); renderRoster();
+            checkConn(c);
             c.on('close', () => { $('roster').innerHTML=''; addChip(myName+' (you)', true);
               $('hub-note').textContent='The hub device left — reload on all devices to start a new room.'; });
             return;
@@ -1619,6 +2229,546 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
   })();
 
   // ================================================================
+  // DROPS MODE — word-addressed ephemeral rooms (host approval + code words)
+  // ================================================================
+  let dropsJoin = null;
+  (() => {
+    let peer=null, isHost=false, conns=[], roster=[myName];
+    let expiry='burn', padRev=0, padTimer=null, padNotice=null;
+    let myTag='', mySecret='', access='open';
+    let dropGeo = null; // {lat,lng,radius} when host requires presence
+
+    // presence-gate toggle + radius picker (Drops)
+    (() => {
+      const rb = $('d-geo-radius');
+      if (rb && !rb.children.length){
+        GEO_RADII.forEach((r,i) => { const b=document.createElement('button');
+          b.type='button'; b.dataset.m=r.m; b.textContent=r.m>=1000?(r.m/1000)+'km':r.m+'m';
+          if (i===1) b.classList.add('on'); rb.appendChild(b); });
+        rb.querySelectorAll('button').forEach(b => b.onclick = () => {
+          rb.querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); });
+      }
+      const t = $('d-geo');
+      if (t) t.onchange = () => { $('d-geo-opts').classList.toggle('hidden', !t.checked);
+        if (!t.checked) setLine2($('d-geo-status'), ''); };
+    })();
+    const msg = (t,bad) => setLine($('d-msg'), t, bad?'bad':'');
+    const broadcast = (d, except) => { for (const c of conns) if (c!==except && c.open) c.send(d); };
+
+    // access toggle (open vs locked) — open form
+    $('d-choose').querySelectorAll('.seg button').forEach(b => b.onclick = () => {
+      $('d-choose').querySelectorAll('.seg button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on'); access = b.dataset.acc;
+      $('d-secret-wrap').classList.toggle('hidden', access!=='locked');
+    });
+    // join form reveals secret field on demand (if host said it's locked, or user wants to try)
+    $('d-join-tag').addEventListener('input', () => {
+      // keep it simple: always allow entering a secret when joining
+      $('d-join-secret-wrap').classList.remove('hidden');
+    });
+
+    function busy(b){ ['d-open-btn','d-join-btn','d-open-tag','d-join-tag'].forEach(id => $(id).disabled=b); }
+
+    // live preview of the normalized tag
+    $('d-open-tag').addEventListener('input', () => {
+      const raw = $('d-open-tag').value;
+      const norm = normalizeTag(raw);
+      const el = $('d-open-preview');
+      if (!raw.trim()) { el.textContent = ''; return; }
+      if (!norm) { el.innerHTML = 'Use letters or numbers, e.g. <b>#party</b>'; return; }
+      el.innerHTML = 'Your Drop: <b>#' + norm + '</b>' + (norm !== raw.toLowerCase().replace(/^#+/,'') ? ' (tidied up)' : '');
+    });
+
+    // ---- OPEN a Drop (host) ----
+    $('d-open-btn').onclick = async () => {
+      const tag = normalizeTag($('d-open-tag').value);
+      if (!tag){ msg('Type a word for your Drop (letters and numbers).', true); return; }
+      access = $('d-choose').querySelector('.seg button.on').dataset.acc;
+      mySecret = access==='locked' ? $('d-open-secret').value.trim() : '';
+      if (access==='locked' && !mySecret){ msg('Add a secret, or switch to Open.', true); return; }
+      // presence gate: capture host location now
+      dropGeo = null;
+      if ($('d-geo') && $('d-geo').checked){
+        const m = parseInt($('d-geo-radius').querySelector('button.on').dataset.m, 10) || 500;
+        setLine2($('d-geo-status'), 'Getting your location…');
+        try {
+          const pos = await getPosition();
+          dropGeo = { lat: pos.lat, lng: pos.lng, radius: m };
+          setLine2($('d-geo-status'), 'Location set — only people within '+(m>=1000?(m/1000)+' km':m+' m')+' can join.', 'ok');
+        } catch(e){
+          setLine2($('d-geo-status'), 'Couldn’t get your location — allow location access, or turn this off.', 'bad');
+          return;
+        }
+      }
+      myTag = tag;
+      msg(''); busy(true);
+      $('d-choose').classList.add('hidden');
+      $('d-host-wait').classList.remove('hidden');
+      showLoader($('d-qr'), 'Opening #'+tag+'…');
+      const rid = await tagRoomId(tag, mySecret);
+      peer = new Peer(rid, peerOpts());
+      peer.on('open', () => {
+        isHost = true;
+        $('d-tagname').textContent = tag;
+        $('d-host-badge').classList.remove('hidden');
+        $('d-tag-badge').textContent = '#'+tag;
+        const url = pageUrl();
+        const link = url ? url + '?drop=' + encodeURIComponent(tag) + (access==='locked'?'&lock=1':'') : null;
+        if (link) renderQR('d-qr', link, 168, 'Share this Drop link:');
+        else $('d-qr').innerHTML = '';
+        $('d-share-line').textContent = access==='locked'
+          ? 'Share the link, and tell your group the secret out loud.'
+          : 'Anyone who opens this link or says “#'+tag+'” can ask to join.';
+        $('d-copy').onclick = async () => {
+          try { await navigator.clipboard.writeText(link || ('#'+tag)); $('d-copy').textContent='Copied';
+            setTimeout(()=>$('d-copy').textContent='Copy Drop link',1500); } catch {}
+        };
+        msg('');
+        peer.on('connection', onIncoming);
+      });
+      peer.on('error', e => {
+        if (e.type==='unavailable-id'){
+          // someone is already hosting this word → offer to join instead
+          peer.destroy();
+          busy(false);
+          $('d-host-wait').classList.add('hidden');
+          $('d-choose').classList.remove('hidden');
+          msg('“#'+tag+'” is live right now. Join it below, or pick another word / add a secret.', true);
+          $('d-join-tag').value = tag;
+        } else fail(e);
+      });
+    };
+
+    // ---- JOIN a Drop ----
+    dropsJoin = async () => {
+      const tag = normalizeTag($('d-join-tag').value);
+      if (!tag){ msg('Type the Drop’s word to join.', true); return; }
+      const secret = $('d-join-secret').value.trim();
+      myTag = tag;
+      msg('Knocking…'); busy(true);
+      const rid = await tagRoomId(tag, secret);
+      peer = new Peer(peerOpts());
+      peer.on('open', () => {
+        const c = peer.connect(rid, {reliable:true});
+        const t = setTimeout(() => { if (!conns.length && !c._app){
+          msg('No live Drop with that word'+(secret?' + secret':'')+'. Check the word, or the secret.', true); busy(false);
+          $('d-join-wait').classList.add('hidden'); $('d-choose').classList.remove('hidden');
+        } }, 12000);
+        c.on('open', () => c.send(JSON.stringify({t:'hello', name:myName})));
+        c.on('data', d => {
+          if (typeof d !== 'string'){ if (c._app) onData(d, c); return; }
+          let m; try { m = JSON.parse(d); } catch { return; }
+          if (m.t==='need-geo'){
+            msg('Checking you’re here…');
+            getPosition().then(pos => {
+              c.send(JSON.stringify({t:'geo', loc:{lat:pos.lat, lng:pos.lng, acc:pos.acc}}));
+              msg('');
+            }).catch(() => {
+              clearTimeout(t);
+              msg('This Drop needs your location to confirm you’re here. Allow location access and try joining again.', true);
+              busy(false); $('d-join-wait').classList.add('hidden'); $('d-choose').classList.remove('hidden');
+            });
+            return;
+          }
+          if (m.t==='geo-deny'){
+            clearTimeout(t);
+            msg(m.reason || 'You’re not close enough to join this Drop.', true);
+            busy(false); $('d-join-wait').classList.add('hidden'); $('d-choose').classList.remove('hidden');
+            return;
+          }
+          if (m.t==='verify'){
+            clearTimeout(t);
+            $('d-choose').classList.add('hidden');
+            $('d-join-wait').classList.remove('hidden');
+            $('d-join-name').textContent = '#'+tag;
+            $('d-my-verify').textContent = m.words;
+            msg('');
+            return;
+          }
+          if (m.t==='approved'){
+            c._app = true; conns.push(c);
+            $('d-tag-badge').textContent = '#'+tag;
+            $('d-entry').classList.add('hidden'); $('d-app').classList.remove('hidden'); renderRoster();
+            checkConnD(c);
+            c.on('close', () => { $('d-roster').innerHTML=''; addChip(myName+' (you)', true);
+              $('d-app-note').textContent='The host left — this Drop is over. Reload to start a new one.'; });
+            return;
+          }
+          if (c._app) onData(d, c);
+        });
+        c.on('close', () => { if (!c._app){ msg('The host didn’t let this device in.', true); busy(false);
+          $('d-join-wait').classList.add('hidden'); $('d-choose').classList.remove('hidden'); } });
+      });
+      peer.on('error', e => { if (e.type==='peer-unavailable'){
+        msg('No live Drop with that word'+(secret?' + secret':'')+' right now.', true); busy(false);
+      } else fail(e); });
+    };
+    $('d-join-btn').onclick = () => dropsJoin();
+    $('d-open-tag').addEventListener('keydown', e => { if (e.key==='Enter') $('d-open-btn').onclick(); });
+    $('d-join-tag').addEventListener('keydown', e => { if (e.key==='Enter') dropsJoin(); });
+
+    $('d-end').onclick = () => {
+      if (!confirm('End this Drop? Everyone will be disconnected.')) return;
+      if (peer) peer.destroy();
+      $('d-share-line').textContent = 'Drop ended. Nothing was saved.';
+      $('d-qr').innerHTML=''; $('d-app').classList.add('hidden');
+    };
+
+    function fail(e){ msg('Connection problem ('+(e.type||'unknown')+'). Reload to try again.', true); busy(false); }
+
+    // ---- host: approvals ----
+    function onIncoming(c){
+      c._approved = false;
+      c.on('data', d => onData(d, c));
+      c.on('close', () => {
+        conns = conns.filter(x => x!==c);
+        if (c._card) c._card.remove();
+        if (!$('d-approvals').children.length) $('d-approvals-card').classList.add('hidden');
+        if (c._approved && isHost){
+          roster = roster.filter(n => n!==c._dbName);
+          broadcast(JSON.stringify({t:'roster', list:roster})); renderRoster();
+        }
+      });
+    }
+    function askApproval(c, name){
+      const words = twoWords();
+      c._dbName = name; c._words = words;
+      c.send(JSON.stringify({t:'verify', words}));
+      $('d-approvals-card').classList.remove('hidden');
+      const div = document.createElement('div'); div.className='approval';
+      const who = document.createElement('span'); who.className='who'; who.textContent = name;
+      const em = document.createElement('span'); em.className='words'; em.textContent = words;
+      const yes = document.createElement('button'); yes.className='small'; yes.textContent='Let in';
+      const no = document.createElement('button'); no.className='quiet small'; no.textContent='Deny';
+      div.append(who, em, yes, no); $('d-approvals').appendChild(div); c._card = div;
+      yes.onclick = () => {
+        div.remove(); if (!$('d-approvals').children.length) $('d-approvals-card').classList.add('hidden');
+        c._approved = true; conns.push(c); roster.push(name);
+        c.send(JSON.stringify({t:'approved'}));
+        broadcast(JSON.stringify({t:'roster', list:roster})); renderRoster();
+        // catch the new joiner up on any live poll (with current votes)
+        if (poll){
+          c.send(JSON.stringify({t:'poll', poll:{id:poll.id, q:poll.q, opts:poll.opts}}));
+          for (const [voter, opt] of Object.entries(poll.votes))
+            c.send(JSON.stringify({t:'vote', id:poll.id, voter, opt}));
+        }
+        if ($('d-app').classList.contains('hidden')){
+          $('d-entry').classList.add('hidden'); $('d-app').classList.remove('hidden'); renderRoster();
+        }
+        checkConnD(c);
+      };
+      no.onclick = () => { div.remove(); if (!$('d-approvals').children.length) $('d-approvals-card').classList.add('hidden'); c.close(); };
+    }
+    function checkConnD(c){
+      setTimeout(async () => {
+        const type = await detectConnType(c);
+        if (type) showConnBadge($('conn-badge-drops'), type);
+      }, 2500);
+    }
+
+    function onData(data, from){
+      if (isHost && !from._approved){
+        if (typeof data === 'string'){
+          try { const m = JSON.parse(data);
+            if (m.t==='hello' && !from._dbName){
+              if (dropGeo && !from._geoOk){
+                // ask the joiner for location before showing an approval card
+                from._pendingName = String(m.name||'Someone').slice(0,40);
+                from.send(JSON.stringify({t:'need-geo'}));
+              } else {
+                askApproval(from, String(m.name||'Someone').slice(0,40));
+              }
+            } else if (m.t==='geo' && dropGeo && !from._geoOk){
+              if (!m.loc || typeof m.loc.lat!=='number'){
+                from.send(JSON.stringify({t:'geo-deny', reason:'This Drop needs your location to confirm you’re here.'}));
+                return;
+              }
+              const dist = geoDist(dropGeo, m.loc);
+              if (dist > dropGeo.radius + (m.loc.acc||0)){
+                const away = dist>=1000 ? (dist/1000).toFixed(1)+' km' : Math.round(dist)+' m';
+                from.send(JSON.stringify({t:'geo-deny', reason:'You appear to be about '+away+' away. This Drop only lets in people who are here.'}));
+                return;
+              }
+              from._geoOk = true;
+              askApproval(from, from._pendingName || 'Someone');
+            }
+          } catch {}
+        }
+        return;
+      }
+      if (typeof data !== 'string'){ if (isHost) broadcast(data, from); receiveChunk(data); return; }
+      let m; try { m = JSON.parse(data); } catch { return; }
+      if (isHost){
+        if ((m.t==='go'||m.t==='skip') && senders[m.id]){ handleReply(m); return; }
+        if (m.t!=='hello') broadcast(data, from);
+      }
+      switch(m.t){
+        case 'roster': roster=m.list; renderRoster(); break;
+        case 'pad': applyPad(m); break;
+        case 'text': receiveText(m); break;
+        case 'meta': receiveMeta(m); break;
+        case 'end': receiveEnd(m); break;
+        case 'go': case 'skip': if (senders[m.id]) handleReply(m); break;
+        case 'poll': onPoll(m); break;
+        case 'vote': onVote(m); break;
+        case 'poll-end': onPollEnd(); break;
+      }
+    }
+
+    let lastRoster = [myName];
+    function renderRoster(){ $('d-roster').innerHTML=''; addChip(myName+' (you)', true);
+      for (const n of roster) if (n!==myName) addChip(n);
+      updatePresence();
+    }
+    function updatePresence(){
+      const n = roster.length;
+      const cEl = $('d-count'); if (cEl) cEl.textContent = n;
+      const lEl = $('d-count-label'); if (lEl) lEl.textContent = (n===1 ? 'here now' : 'here now');
+      // diff against lastRoster to announce joins/leaves
+      const joined = roster.filter(x => !lastRoster.includes(x));
+      const left = lastRoster.filter(x => !roster.includes(x));
+      joined.forEach(name => { if (name!==myName) pushEvent(name, 'joined', 'join'); });
+      left.forEach(name => { if (name!==myName) pushEvent(name, 'left', 'leave'); });
+      lastRoster = roster.slice();
+    }
+    function pushEvent(name, verb, cls){
+      const feed = $('d-activity'); if (!feed) return;
+      const ev = document.createElement('div'); ev.className = 'ev ' + cls;
+      ev.innerHTML = '<b></b> ' + verb; ev.querySelector('b').textContent = name;
+      feed.prepend(ev);
+      while (feed.children.length > 4) feed.lastChild.remove();
+      setTimeout(() => { ev.style.transition='opacity .4s'; ev.style.opacity='0';
+        setTimeout(()=>ev.remove(), 400); }, 4000);
+    }
+    function addChip(name, me){ const s=document.createElement('span');
+      s.className='chip'+(me?' me':''); s.innerHTML='<span class="dot"></span>'; s.append(name);
+      $('d-roster').appendChild(s); }
+
+    // ---- live pad ----
+    const pad = $('d-pad');
+    pad.addEventListener('input', () => {
+      clearTimeout(padTimer);
+      padTimer = setTimeout(() => { padRev = Date.now();
+        broadcast(JSON.stringify({t:'pad', text:pad.value, rev:padRev, from:myName})); }, 120);
+    });
+    function applyPad(m){
+      if (m.rev <= padRev) return;
+      padRev = m.rev;
+      const foc = document.activeElement===pad, pos = pad.selectionStart;
+      pad.value = m.text; if (foc) pad.setSelectionRange(pos, pos);
+      $('d-pad-status').innerHTML = 'edited on <span class="who"></span>';
+      $('d-pad-status').querySelector('.who').textContent = m.from;
+      $('d-pad-status').querySelector('.who').style.color = 'var(--teal)';
+      clearTimeout(padNotice); padNotice = setTimeout(() => $('d-pad-status').textContent='', 2500);
+    }
+    $('d-pad-copy').onclick = async () => {
+      try { await navigator.clipboard.writeText(pad.value); $('d-pad-status').textContent='Copied.'; }
+      catch { pad.select(); document.execCommand('copy'); }
+      clearTimeout(padNotice); padNotice = setTimeout(() => $('d-pad-status').textContent='', 1500);
+    };
+    $('d-pad-clear').onclick = () => { pad.value=''; pad.dispatchEvent(new Event('input')); };
+
+    // ---- live poll ----
+    let poll = null; // {id, q, opts:[], votes:{voterName:optIndex}}
+    function renderPoll(){
+      if (!poll){ $('d-poll-live').classList.add('hidden'); $('d-poll-setup').classList.remove('hidden'); return; }
+      $('d-poll-setup').classList.add('hidden'); $('d-poll-live').classList.remove('hidden');
+      $('d-poll-question').textContent = poll.q;
+      const counts = poll.opts.map((_,i) => Object.values(poll.votes).filter(v=>v===i).length);
+      const total = counts.reduce((a,b)=>a+b,0) || 1;
+      const myVote = poll.votes[myName];
+      const box = $('d-poll-options'); box.innerHTML='';
+      poll.opts.forEach((opt,i) => {
+        const pct = Math.round(counts[i]/total*100);
+        const el = document.createElement('div');
+        el.className = 'poll-opt' + (myVote===i?' voted':'') + (myVote!=null?' disabled':'');
+        el.innerHTML = '<span class="fill"></span><span class="lbl"></span><span class="cnt"></span>';
+        el.querySelector('.lbl').textContent = opt;
+        el.querySelector('.cnt').textContent = counts[i] + ' · ' + pct + '%';
+        el.querySelector('.fill').style.width = pct + '%';
+        if (myVote==null) el.onclick = () => castVote(i);
+        box.appendChild(el);
+      });
+      // only host sees end button meaningfully, but anyone can dismiss their view
+      $('d-poll-end').textContent = isHost ? 'End poll' : 'Hide';
+    }
+    function castVote(i){
+      if (!poll || poll.votes[myName]!=null) return;
+      poll.votes[myName] = i;
+      broadcast(JSON.stringify({t:'vote', id:poll.id, voter:myName, opt:i}));
+      renderPoll();
+    }
+    $('d-poll-start').onclick = () => {
+      const q = $('d-poll-q').value.trim();
+      const opts = ['d-poll-a','d-poll-b','d-poll-c','d-poll-d'].map(id=>$(id).value.trim()).filter(Boolean);
+      if (!q || opts.length < 2){ setLine($('d-msg'),'A poll needs a question and at least two options.','bad'); return; }
+      poll = { id: rid(), q, opts, votes:{} };
+      broadcast(JSON.stringify({t:'poll', poll:{id:poll.id, q, opts} }));
+      renderPoll();
+    };
+    $('d-poll-end').onclick = () => {
+      if (isHost){ poll = null; broadcast(JSON.stringify({t:'poll-end'})); }
+      else { poll = null; }
+      ['d-poll-q','d-poll-a','d-poll-b','d-poll-c','d-poll-d'].forEach(id=>$(id).value='');
+      renderPoll();
+    };
+    function onPoll(m){ poll = { id:m.poll.id, q:m.poll.q, opts:m.poll.opts, votes:{} }; renderPoll(); }
+    function onVote(m){ if (poll && poll.id===m.id){ poll.votes[m.voter]=m.opt; renderPoll(); } }
+    function onPollEnd(){ poll=null; renderPoll(); }
+
+    // ---- expiry seg ----
+    $('d-seg').querySelectorAll('button').forEach(b => b.onclick = () => {
+      $('d-seg').querySelectorAll('button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      expiry = b.dataset.exp==='burn' ? 'burn' : parseInt(b.dataset.exp, 10);
+    });
+    function burn(row, item){
+      if (item){ if (item.url && !item.saved) URL.revokeObjectURL(item.url); item.parts=null; item.body=null; }
+      row.el.className='burned';
+      row.el.innerHTML='<span class="body">Burned — cleared from this device</span>';
+      setTimeout(() => row.el.remove(), 4000);
+    }
+    function armExpiry(row, item){
+      if (expiry==='burn') return;
+      const total=expiry, t0=Date.now();
+      row.ring.classList.remove('hidden');
+      const iv = setInterval(() => {
+        const left = total - (Date.now()-t0)/1000;
+        if (left<=0){ clearInterval(iv); burn(row, item); return; }
+        row.ring.style.setProperty('--p', (left/total*100)+'%');
+      }, 1000);
+    }
+
+    // ---- drop text ----
+    function dropText(body){
+      if (!body.trim()) return;
+      broadcast(JSON.stringify({t:'text', id:rid(), body, from:myName}));
+      const row = makeRow($('d-list'), {kind:'text', status:'Dropped'});
+      row.setText(body); row.el.classList.add('done');
+      setTimeout(() => row.el.remove(), 6000);
+    }
+    $('d-text-send').onclick = () => { dropText($('d-text-in').value); $('d-text-in').value=''; };
+    $('d-text-in').addEventListener('keydown', e => { if (e.key==='Enter') $('d-text-send').onclick(); });
+    function receiveText(m){
+      const item = {body:m.body};
+      const row = makeRow($('d-list'), {kind:'text', status:'from '+m.from});
+      row.setText(m.body);
+      const btn = document.createElement('button'); btn.className='small'; btn.textContent='Copy';
+      btn.onclick = async () => { try { await navigator.clipboard.writeText(item.body); } catch {}
+        if (expiry==='burn') burn(row, item); else btn.textContent='Copied'; };
+      row.actions.appendChild(btn);
+      armExpiry(row, item);
+    }
+
+    // ---- drop files ----
+    const drop=$('d-drop'), input=$('d-file');
+    drop.onclick = () => input.click();
+    drop.onkeydown = e => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); input.click(); } };
+    input.onchange = () => { sendFiles([...input.files]); input.value=''; };
+    ['dragover','dragenter'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+    ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+    drop.addEventListener('drop', e => sendFiles([...e.dataTransfer.files]));
+
+    const senders={}; let queue=[], sendingNow=false;
+    function sendFiles(files){ if (!conns.some(c=>c.open)) return; queue.push(...files); if (!sendingNow) nextFile(); }
+    function handleReply(m){ const s=senders[m.id]; if (!s) return; if (m.t==='go') s.gos++; s.replies++; s.check(); }
+
+    async function nextFile(){
+      const file = queue.shift();
+      if (!file){ sendingNow=false; return; }
+      sendingNow = true;
+      const id = rid();
+      const row = makeRow($('d-list'), {kind:'file', title:file.name, size:file.size, status:'Waiting for the Drop…'});
+      broadcast(JSON.stringify({t:'meta', id, name:file.name, size:file.size, mime:file.type, from:myName}));
+      const peersCount = isHost ? conns.length : Math.max(1, roster.length-1);
+      const ok = await new Promise(res => {
+        const s = senders[id] = { gos:0, replies:0,
+          check(){ if (s.gos>0 && s.replies>=peersCount) fin(true);
+                   else if (s.replies>=peersCount && s.gos===0) fin(false); } };
+        const t1=setTimeout(() => { if (s.gos>0) fin(true); }, 10000);
+        const t2=setTimeout(() => fin(s.gos>0), 45000);
+        function fin(v){ clearTimeout(t1); clearTimeout(t2); delete senders[id]; res(v); }
+        s.check();
+      });
+      if (!ok){ row.setStatus('No one grabbed it', true); sendingNow=false; nextFile(); return; }
+      row.setStatus('Sending · '+human(file.size));
+      let offset=0;
+      while (offset < file.size){
+        const c = conns.find(x=>x.open);
+        if (!c){ row.setStatus('Failed — disconnected', true); sendingNow=false; return; }
+        while (c.open && c.dataChannel.bufferedAmount > HIGH_WATER) await new Promise(r=>setTimeout(r,50));
+        const part = await file.slice(offset, offset+CHUNK).arrayBuffer();
+        broadcast(frame(id, part)); offset += part.byteLength;
+        row.setProgress(offset/file.size);
+      }
+      broadcast(JSON.stringify({t:'end', id}));
+      row.setStatus('Dropped'); row.el.classList.add('done');
+      setTimeout(() => row.el.remove(), 6000);
+      nextFile();
+    }
+
+    const incoming={};
+    function receiveMeta(m){
+      const row = makeRow($('d-list'), {kind:'file', title:m.name, size:m.size, status:'from '+m.from});
+      const it = incoming[m.id] = { name:m.name, size:m.size, mime:m.mime||'application/octet-stream',
+        got:0, parts:[], row, mode:'mem', buffered:0 };
+      const reply = t => broadcast(JSON.stringify({t, id:m.id}));
+      if (m.size > BIG_FILE && FS_OK){
+        it.mode='pending';
+        row.setStatus(human(m.size)+' — choose where to save');
+        const btn=document.createElement('button'); btn.className='small'; btn.textContent='Save to disk';
+        btn.onclick = async () => {
+          try {
+            const h = await showSaveFilePicker({suggestedName:m.name});
+            it.writer = await h.createWritable(); it.mode='disk';
+            for (const p of it.parts) await it.writer.write(p);
+            it.parts=[]; btn.remove(); row.setStatus('Receiving to disk…'); reply('go');
+          } catch { row.setStatus('Save cancelled', true); reply('skip'); delete incoming[m.id]; }
+        };
+        row.actions.appendChild(btn);
+      } else { if (m.size > BIG_FILE) row.setStatus('Large file — receiving in memory'); reply('go'); }
+    }
+    async function receiveChunk(data){
+      let f; try { f = unframe(data); } catch { return; }
+      const it = incoming[f.id]; if (!it) return;
+      it.got += f.payload.byteLength;
+      if (it.mode==='disk') await it.writer.write(f.payload);
+      else {
+        it.parts.push(f.payload); it.buffered += f.payload.byteLength;
+        if (it.mode==='pending' && it.buffered > MEM_CAP){
+          it.row.setStatus('Too large to hold — save not chosen in time', true);
+          it.parts=[]; delete incoming[f.id]; return;
+        }
+      }
+      it.row.setProgress(it.got/it.size);
+    }
+    async function receiveEnd(m){
+      const it = incoming[m.id]; if (!it) return;
+      delete incoming[m.id];
+      const row = it.row; row.el.classList.add('done'); row.setProgress(1);
+      if (it.mode==='disk'){
+        await it.writer.close();
+        if (expiry==='burn') burn(row, it);
+        else { row.setStatus('Saved to disk', false, true); armExpiry(row, it); }
+        return;
+      }
+      const blob = new Blob(it.parts, {type:it.mime});
+      it.parts=null; it.url = URL.createObjectURL(blob); it.saved=false;
+      const btn=document.createElement('button'); btn.className='small'; btn.textContent='Save';
+      btn.onclick = () => {
+        const a=document.createElement('a'); a.href=it.url; a.download=it.name||'download'; a.rel='noopener';
+        document.body.appendChild(a); a.click(); a.remove();
+        it.saved=true; btn.textContent='Saved';
+        if (expiry==='burn'){ setTimeout(() => { row.el.classList.add('burned');
+          const b=row.el.querySelector('.body'); if (b) b.textContent='Saved — removed from list';
+          setTimeout(() => row.el.remove(), 3500); }, 1200); }
+      };
+      row.setStatus(human(it.size)); row.actions.appendChild(btn);
+      if (expiry!=='burn') armExpiry(row, it);
+    }
+  })();
+
+  // ================================================================
   // GOOGLE DRIVE (organizer's own account; token stays in this tab)
   // ================================================================
   let gToken=null, gExpiry=0, tokenClient=null;
@@ -1704,28 +2854,54 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
     if (gReady()) arm();
     else { const iv = setInterval(() => { if (gReady()){ clearInterval(iv); arm(); } }, 200);
            setTimeout(() => clearInterval(iv), 15000); }
+
+    // presence-gate toggle + radius picker
+    const radiusBox = $('ev-geo-radius');
+    if (radiusBox && !radiusBox.children.length){
+      GEO_RADII.forEach((r,i) => { const b=document.createElement('button');
+        b.type='button'; b.dataset.m=r.m; b.textContent=r.m>=1000?(r.m/1000)+'km':r.m+'m';
+        if (i===1) b.classList.add('on'); radiusBox.appendChild(b); });
+      radiusBox.querySelectorAll('button').forEach(b => b.onclick = () => {
+        radiusBox.querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); });
+    }
+    $('ev-geo').onchange = () => { $('ev-geo-opts').classList.toggle('hidden', !$('ev-geo').checked);
+      if (!$('ev-geo').checked) setLine2($('ev-geo-status'), ''); };
   }
+  function setLine2(el, t, cls){ if(!el) return; el.textContent=t||''; el.className='geo-note'+(cls?' '+cls:''); }
 
   $('ev-start').onclick = async () => {
     const name = $('ev-name').value.trim();
     if (!name){ setLine($('ev-status'), 'Give your event a name.', 'bad'); return; }
     const pin = $('ev-pin').value.trim();
+    // presence gate: capture host location now
+    let geo = null;
+    if ($('ev-geo').checked){
+      const m = parseInt($('ev-geo-radius').querySelector('button.on').dataset.m, 10) || 500;
+      setLine2($('ev-geo-status'), 'Getting your location…');
+      try {
+        const pos = await getPosition();
+        geo = { lat: pos.lat, lng: pos.lng, radius: m };
+        setLine2($('ev-geo-status'), 'Location set. Only people within '+(m>=1000?(m/1000)+' km':m+' m')+' can upload.', 'ok');
+      } catch(e){
+        setLine2($('ev-geo-status'), 'Couldn’t get your location — allow location access, or turn this off.', 'bad');
+        return;
+      }
+    }
     $('ev-start').disabled = true;
     setLine($('ev-status'), 'Creating Drive folder…');
     let folder;
     try { folder = await driveCreateFolder('DropBeam – ' + name); }
     catch (e){ setLine($('ev-status'), 'Could not create the folder ('+e.message+').', 'bad'); $('ev-start').disabled=false; return; }
     setLine($('ev-status'), 'Opening the event room…');
-    // move to the live view immediately with a loader in the QR slot
     $('c-step1').classList.add('hidden');
     $('c-step2').classList.add('hidden');
     $('c-live').classList.remove('hidden');
     $('live-event').textContent = name;
     showLoader($('c-qr'), 'Setting up your event…');
-    startCollectRoom(name, pin, folder);
+    startCollectRoom(name, pin, folder, geo);
   };
 
-  function startCollectRoom(evName, pin, folder){
+  function startCollectRoom(evName, pin, folder, geo){
     const code = newCode(8);
     const cpeer = new Peer(CPREFIX + code, peerOpts());
     const parts = new Map();
@@ -1760,7 +2936,7 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
 
     cpeer.on('connection', c => {
       parts.set(c, { name:null, files:{}, nFiles:0, nBytes:0, pinTries:0 });
-      c.on('open', () => c.send(JSON.stringify({t:'info', event:evName, needPin: !!pin})));
+      c.on('open', () => c.send(JSON.stringify({t:'info', event:evName, needPin: !!pin, needGeo: !!geo})));
       c.on('close', () => parts.delete(c));
       c.on('data', d => onCollectData(c, d));
     });
@@ -1788,6 +2964,19 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
           if (p.pinTries >= PIN_TRIES){ c.send(JSON.stringify({t:'deny', reason:'Too many wrong PINs'})); c.close(); return; }
           c.send(JSON.stringify({t:'deny', reason:'Wrong PIN ('+(PIN_TRIES-p.pinTries)+' tries left)'}));
           return;
+        }
+        // presence gate — verify the participant is within the fence
+        if (geo){
+          if (!m.loc || typeof m.loc.lat !== 'number'){
+            c.send(JSON.stringify({t:'deny', reason:'This event needs your location to confirm you’re here. Allow location access and try again.'}));
+            return;
+          }
+          const dist = geoDist(geo, m.loc);
+          if (dist > geo.radius + (m.loc.acc || 0)){ // allow the device's own accuracy margin
+            const away = dist>=1000 ? (dist/1000).toFixed(1)+' km' : Math.round(dist)+' m';
+            c.send(JSON.stringify({t:'deny', reason:'You appear to be about '+away+' away. This event only accepts uploads from people at the venue.'}));
+            return;
+          }
         }
         p.name = String(m.name || 'Anonymous').replace(/[\x00-\x1f]/g,'').slice(0, 60) || 'Anonymous';
         c.send(JSON.stringify({t:'welcome'}));
@@ -1859,6 +3048,7 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
         $('p-title').textContent = m.event;
         $('p-gate').classList.remove('hidden');
         if (m.needPin) $('p-pin-wrap').classList.remove('hidden');
+        if (m.needGeo){ needGeo = true; $('p-geo-wrap').classList.remove('hidden'); }
         pmsg('');
       }
       if (m.t==='welcome'){
@@ -1885,9 +3075,21 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
       }
     }
 
-    $('p-enter').onclick = () => {
+    let needGeo = false;
+    $('p-enter').onclick = async () => {
       if (!conn){ pmsg('Still connecting — one moment…'); return; }
-      conn.send(JSON.stringify({t:'enter', name:$('p-name').value.trim(), pin:$('p-pin').value.trim()}));
+      const payload = { t:'enter', name:$('p-name').value.trim(), pin:$('p-pin').value.trim() };
+      if (needGeo){
+        pmsg('Checking you’re at the venue…');
+        try {
+          const pos = await getPosition();
+          payload.loc = { lat: pos.lat, lng: pos.lng, acc: pos.acc };
+        } catch(e){
+          pmsg('This event needs your location to confirm you’re here. Please allow location access and tap Continue again.', 'bad');
+          return;
+        }
+      }
+      conn.send(JSON.stringify(payload));
     };
     $('p-name').addEventListener('keydown', e => { if (e.key==='Enter') $('p-enter').onclick(); });
     $('p-pin').addEventListener('keydown', e => { if (e.key==='Enter') $('p-enter').onclick(); });
@@ -1930,6 +3132,217 @@ try { if (typeof QRCode !== "undefined") window.QRCode = QRCode; } catch(e){}
       sending=false; nextUp();
     }
   }
+
+  // ================================================================
+  // TOOLS — 100% local file utilities (nothing uploaded)
+  // ================================================================
+  let toolsReady = false;
+  const libState = {}; // url -> 'loading'|'ready'|'failed'
+  function loadScript(url){
+    return new Promise((res, rej) => {
+      if (libState[url]==='ready') return res();
+      const s = document.createElement('script');
+      s.src = url; s.onload = () => { libState[url]='ready'; res(); };
+      s.onerror = () => { libState[url]='failed'; rej(new Error('load failed')); };
+      document.head.appendChild(s);
+    });
+  }
+  async function needPdfLib(){ if (!window.PDFLib) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js'); return window.PDFLib; }
+  async function needZip(){ if (!window.JSZip) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'); return window.JSZip; }
+
+  const humanSz = n => { const u=['B','KB','MB','GB']; let i=0; while(n>=1024&&i<u.length-1){n/=1024;i++;} return n.toFixed(i?1:0)+' '+u[i]; };
+  function dl(blob, name){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download=name; document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+  function tstat(id, msg, cls){ const el=$(id); if(!el) return; el.textContent=msg||''; el.className='tool-status'+(cls?' '+cls:''); }
+
+  // generic file-list holder per tool
+  function wireDrop(dropId, inputId, onFiles){
+    const drop=$(dropId), input=$(inputId);
+    if (!drop||!input) return;
+    drop.onclick = () => input.click();
+    drop.onkeydown = e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); input.click(); } };
+    input.onchange = () => { onFiles([...input.files]); input.value=''; };
+    ['dragover','dragenter'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+    ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+    drop.addEventListener('drop', e => { e.preventDefault(); onFiles([...e.dataTransfer.files]); });
+  }
+  function renderFileList(listId, files, onRemove){
+    const ul=$(listId); if(!ul) return; ul.innerHTML='';
+    files.forEach((f,i) => { const li=document.createElement('li');
+      const nm=document.createElement('span'); nm.className='nm'; nm.textContent=f.name;
+      const sz=document.createElement('span'); sz.className='sz'; sz.textContent=humanSz(f.size);
+      const rm=document.createElement('span'); rm.className='rm'; rm.textContent='×'; rm.title='Remove';
+      rm.onclick=()=>onRemove(i);
+      li.append(nm,sz,rm); ul.appendChild(li); });
+  }
+
+  function initTools(){
+    if (toolsReady) return; toolsReady = true;
+
+    // ---- PDF merge/split ----
+    let pdfFiles=[];
+    wireDrop('pdf-drop','pdf-files', fs => { pdfFiles.push(...fs.filter(f=>/pdf$/i.test(f.type)||/\.pdf$/i.test(f.name)));
+      refreshPdf(); });
+    function refreshPdf(){ renderFileList('pdf-list', pdfFiles, i=>{ pdfFiles.splice(i,1); refreshPdf(); });
+      $('pdf-actions').classList.toggle('hidden', pdfFiles.length===0); }
+    $('pdf-merge').onclick = async () => {
+      if (pdfFiles.length<1) return;
+      tstat('pdf-status','Merging…');
+      try {
+        const PDFLib = await needPdfLib();
+        const out = await PDFLib.PDFDocument.create();
+        for (const f of pdfFiles){
+          const src = await PDFLib.PDFDocument.load(await f.arrayBuffer());
+          const pages = await out.copyPages(src, src.getPageIndices());
+          pages.forEach(p=>out.addPage(p));
+        }
+        const bytes = await out.save();
+        dl(new Blob([bytes],{type:'application/pdf'}), 'merged.pdf');
+        tstat('pdf-status','Merged '+pdfFiles.length+' files.','ok');
+      } catch(e){ tstat('pdf-status','Couldn’t merge (PDF library unavailable or a file was invalid).','bad'); }
+    };
+    $('pdf-split').onclick = async () => {
+      if (!pdfFiles.length) return;
+      const spec=$('pdf-range').value.trim(); if(!spec){ tstat('pdf-status','Enter page numbers, e.g. 1-3,5','bad'); return; }
+      tstat('pdf-status','Extracting…');
+      try {
+        const PDFLib = await needPdfLib();
+        const src = await PDFLib.PDFDocument.load(await pdfFiles[0].arrayBuffer());
+        const total = src.getPageCount();
+        const idx = parseRange(spec, total);
+        if (!idx.length){ tstat('pdf-status','No valid pages in that range (file has '+total+' pages).','bad'); return; }
+        const out = await PDFLib.PDFDocument.create();
+        const pages = await out.copyPages(src, idx);
+        pages.forEach(p=>out.addPage(p));
+        const bytes = await out.save();
+        dl(new Blob([bytes],{type:'application/pdf'}), 'extract.pdf');
+        tstat('pdf-status','Extracted '+idx.length+' page(s).','ok');
+      } catch(e){ tstat('pdf-status','Couldn’t extract (library unavailable or invalid PDF).','bad'); }
+    };
+    function parseRange(spec, total){
+      const out=[];
+      spec.split(',').forEach(part => { part=part.trim();
+        const m=part.match(/^(\d+)\s*-\s*(\d+)$/);
+        if (m){ let a=+m[1], b=+m[2]; if(a>b)[a,b]=[b,a];
+          for(let p=a;p<=b;p++) if(p>=1&&p<=total) out.push(p-1); }
+        else if (/^\d+$/.test(part)){ const p=+part; if(p>=1&&p<=total) out.push(p-1); }
+      });
+      return [...new Set(out)];
+    }
+
+    // ---- ZIP ----
+    let zipFiles=[];
+    wireDrop('zip-drop','zip-files', fs => { zipFiles.push(...fs); refreshZip(); });
+    function refreshZip(){ renderFileList('zip-list', zipFiles, i=>{ zipFiles.splice(i,1); refreshZip(); });
+      $('zip-actions').classList.toggle('hidden', zipFiles.length===0); }
+    $('zip-make').onclick = async () => {
+      if (!zipFiles.length) return;
+      tstat('zip-status','Zipping…');
+      try {
+        const JSZip = await needZip();
+        const zip = new JSZip();
+        for (const f of zipFiles) zip.file(f.name, f);
+        const blob = await zip.generateAsync({type:'blob', compression:'DEFLATE'});
+        const nm = ($('zip-name').value.trim() || 'bundle').replace(/[^a-z0-9_-]+/gi,'_');
+        dl(blob, nm+'.zip');
+        tstat('zip-status','Zipped '+zipFiles.length+' files ('+humanSz(blob.size)+').','ok');
+      } catch(e){ tstat('zip-status','Couldn’t create the ZIP (library unavailable).','bad'); }
+    };
+
+    // ---- image compress/convert ----
+    let imgFiles=[];
+    wireDrop('img-drop','img-files', fs => { imgFiles.push(...fs.filter(f=>/^image\//.test(f.type))); refreshImg(); });
+    function refreshImg(){ renderFileList('img-list', imgFiles, i=>{ imgFiles.splice(i,1); refreshImg(); });
+      $('img-controls').classList.toggle('hidden', imgFiles.length===0); }
+    $('img-format').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      $('img-format').querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); });
+    $('img-go').onclick = async () => {
+      if (!imgFiles.length) return;
+      const maxW = parseInt($('img-width').value,10) || 0;
+      const q = (parseInt($('img-quality').value,10)||80)/100;
+      const fmt = $('img-format').querySelector('button.on').dataset.fmt;
+      const ext = fmt==='image/png'?'png':fmt==='image/webp'?'webp':'jpg';
+      tstat('img-status','Processing…');
+      let done=0, failed=0;
+      for (const f of imgFiles){
+        try { const blob = await processImage(f, maxW, q, fmt);
+          const base = f.name.replace(/\.[^.]+$/,'');
+          dl(blob, base+'.'+ext); done++;
+        } catch(e){ failed++; }
+      }
+      tstat('img-status', done+' image(s) downloaded'+(failed?', '+failed+' failed (format unsupported?)':'')+'.', failed?'bad':'ok');
+    };
+    function processImage(file, maxW, q, fmt){
+      return new Promise((res, rej) => {
+        const img = new Image();
+        img.onload = () => {
+          let w=img.naturalWidth, h=img.naturalHeight;
+          if (maxW && w>maxW){ h = Math.round(h*maxW/w); w = maxW; }
+          const c=document.createElement('canvas'); c.width=w; c.height=h;
+          const ctx=c.getContext('2d'); ctx.drawImage(img,0,0,w,h);
+          c.toBlob(b => b?res(b):rej(new Error('encode failed')), fmt, q);
+          URL.revokeObjectURL(img.src);
+        };
+        img.onerror = () => rej(new Error('decode failed'));
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
+    // ---- metadata strip (re-encode via canvas removes EXIF) ----
+    let metaFiles=[];
+    wireDrop('meta-drop','meta-files', async fs => {
+      const imgs = fs.filter(f=>/^image\//.test(f.type));
+      if (!imgs.length) return;
+      metaFiles = imgs;
+      tstat('meta-status','Cleaning…');
+      let done=0, failed=0;
+      const ul=$('meta-list'); ul.innerHTML='';
+      for (const f of imgs){
+        try {
+          // preserve format where possible (jpeg/png/webp)
+          const fmt = /png/i.test(f.type)?'image/png':/webp/i.test(f.type)?'image/webp':'image/jpeg';
+          const blob = await processImage(f, 0, 0.92, fmt);
+          const li=document.createElement('li');
+          const nm=document.createElement('span'); nm.className='nm'; nm.textContent=f.name+' → cleaned';
+          const a=document.createElement('a'); a.textContent='Download'; a.href=URL.createObjectURL(blob);
+          a.download=f.name.replace(/\.[^.]+$/,'')+'-clean.'+(fmt==='image/png'?'png':fmt==='image/webp'?'webp':'jpg');
+          li.append(nm,a); ul.appendChild(li); done++;
+        } catch(e){ failed++; }
+      }
+      tstat('meta-status', done+' image(s) cleaned. The file is re-encoded, so hidden EXIF (location, device, timestamps) is removed.'+(failed?' '+failed+' failed.':''), failed?'bad':'ok');
+    });
+
+    // ---- text diff (line-based LCS) ----
+    $('diff-go').onclick = () => {
+      const a = $('diff-a').value.split('\n');
+      const b = $('diff-b').value.split('\n');
+      const ops = diffLines(a, b);
+      const out = $('diff-out'); out.innerHTML=''; out.classList.add('show');
+      if (!ops.length){ const d=document.createElement('div'); d.className='dl same'; d.textContent='(both empty)'; out.appendChild(d); return; }
+      ops.forEach(op => { const d=document.createElement('div');
+        d.className='dl '+(op.t==='add'?'add':op.t==='del'?'del':'same');
+        d.textContent = op.line; out.appendChild(d); });
+    };
+    function diffLines(a, b){
+      // LCS table
+      const n=a.length, m=b.length;
+      const dp=Array.from({length:n+1},()=>new Int32Array(m+1));
+      for (let i=n-1;i>=0;i--) for (let j=m-1;j>=0;j--)
+        dp[i][j] = a[i]===b[j] ? dp[i+1][j+1]+1 : Math.max(dp[i+1][j], dp[i][j+1]);
+      const ops=[]; let i=0,j=0;
+      while (i<n && j<m){
+        if (a[i]===b[j]){ ops.push({t:'same',line:a[i]}); i++; j++; }
+        else if (dp[i+1][j] >= dp[i][j+1]){ ops.push({t:'del',line:a[i]}); i++; }
+        else { ops.push({t:'add',line:b[j]}); j++; }
+      }
+      while (i<n){ ops.push({t:'del',line:a[i++]}); }
+      while (j<m){ ops.push({t:'add',line:b[j++]}); }
+      return ops;
+    }
+  }
+  // expose for router
+  window.__initTools = initTools;
 })();
 </script>
 </body>
